@@ -1,7 +1,7 @@
 package com.carlosjr.products.products;
 
+import com.carlosjr.products.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +15,8 @@ public class ProductService {
     ProductRepository productRepository;
     public Product findProductById(Long id){
         Optional<Product> productOpt = productRepository.findById(id);
-        if(productOpt == null)
-            throw new NoSuchElementException();
+        if(productOpt.isEmpty())
+            throw new ResourceNotFoundException("The product with id " + id + " was not found.");
         return productOpt.get();
     }
     public List<Product> findAllProducts(){
@@ -25,7 +25,7 @@ public class ProductService {
     public void createProduct(Product product){
         productRepository.save(product);
     }
-    public void deleteProduct(Long id){
+    public void deleteProduct(Long id) throws Exception {
         productRepository.delete(findProductById(id));
     }
     @Scope("test")
