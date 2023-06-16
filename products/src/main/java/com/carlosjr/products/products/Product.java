@@ -17,7 +17,6 @@ import java.io.Serializable;
 @Entity
 @Table(name="product")
 public class Product implements Serializable {
-
     @Serial
     private static final long serialVersionUID = 1L;
     @Id
@@ -37,6 +36,6 @@ public class Product implements Serializable {
     @Column(name="marketplace")
     private String marketPlaceName;
     @Column(name = "creation_date")
-    private String creation_date;
+    private String creationDate;
 
 }

@@ -1,16 +1,17 @@
 package com.carlosjr.products.products;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/products")
 public class ProductResource {
-
     @Autowired
     ProductService productService;
 
@@ -19,6 +20,18 @@ public class ProductResource {
         Product product = productService.findProductById(productId);
         return ResponseEntity.ok().body(product);
     }
+    @PostMapping(value = "/create")
+    public ResponseEntity<Void> createProduct(@RequestBody @Valid ProductDTO productDTO, UriComponentsBuilder ucb){
+        Product product = new Product();
+        BeanUtils.copyProperties(productDTO, product);
+        long productId = productService.createProduct(product);
+        URI resourcePath = ucb
+                .path("/products/find/{productId}")
+                .buildAndExpand(productId)
+                .toUri();
+        return ResponseEntity.created(resourcePath).build();
+    }
+
 
 
 }
