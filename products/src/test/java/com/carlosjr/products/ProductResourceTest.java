@@ -24,16 +24,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ProductResourceTest {
     @Autowired
     TestRestTemplate restTemplate;
-
     private ProductDTO product;
-
     @BeforeEach
     void setUp(){
         product = new ProductDTO("Manteiga", 6.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão");
     }
     @Test
+    public void shouldBeAbleToAccessPublicResource(){
+        ResponseEntity<String> response = restTemplate
+                .getForEntity("/products/public", String.class);
+        assertThat(response.getBody()).isEqualTo("Successfully accessed");
+    }
+    @Test
     public void shouldRetrieveAProductUsingValidId(){
         ResponseEntity<Product> response = restTemplate
+                .withBasicAuth("adam", "test")
                 .getForEntity("/products/find/1", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Product retrievedProduct = response.getBody();
@@ -43,16 +48,19 @@ public class ProductResourceTest {
     @Test
     public void shouldRespondNotFoundWhenTheResourceWasNotFound(){
         ResponseEntity<Product> response = restTemplate
+                .withBasicAuth("adam", "test")
                 .getForEntity("/products/find/99", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
     public void shouldCreateAndGetTheResourcePath(){
         ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("adam", "test")
                 .postForEntity("/products/create", product, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         URI resourcePath = response.getHeaders().getLocation();
         ResponseEntity<Product> response2 = restTemplate
+                .withBasicAuth("adam", "test")
                 .getForEntity(resourcePath, Product.class);
         Product comparableProduct = response2.getBody();
         ProductDTO comparableProductDTO = new ProductDTO(
@@ -73,16 +81,19 @@ public class ProductResourceTest {
         invalidProduct.setMarketPlaceName("Giassi");
         invalidProduct.setProductType(ProductType.COSMETICOS);
         ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("adam", "test")
                 .postForEntity("/products/create", invalidProduct, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         invalidProduct.setUnitType(UnitType.UNIDADE);
         invalidProduct.setValue(-2.6);
         ResponseEntity<Void> response2 = restTemplate
+                .withBasicAuth("adam", "test")
                 .postForEntity("/products/create", invalidProduct, Void.class);
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         invalidProduct.setValue(3.5);
         invalidProduct.setName("pão2");
         ResponseEntity<Void> response3 = restTemplate
+                .withBasicAuth("adam", "test")
                 .postForEntity("/products/create", invalidProduct, Void.class);
         assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }

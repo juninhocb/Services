@@ -17,7 +17,6 @@ import java.util.Arrays;
 @Configuration
 @Profile("test")
 public class MockInitializer implements CommandLineRunner {
-
     @Autowired
     ProductService productService;
 
