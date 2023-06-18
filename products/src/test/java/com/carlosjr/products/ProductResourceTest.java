@@ -120,5 +120,13 @@ public class ProductResourceTest {
         assertThat(response.getBody().size()).isEqualTo(2);
     }
 
+    @Test
+    public void shouldNotRetrieveAnItemWhenTheOwnerIsNotAllowed(){
+        ResponseEntity<Product> response = restTemplate
+                .withBasicAuth(basicUser, basicPassword)
+                .getForEntity("/products/find/1/3", Product.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
 
 }
