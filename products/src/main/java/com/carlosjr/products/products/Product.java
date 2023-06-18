@@ -22,6 +22,8 @@ public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "owner_group")
+    private Long ownerGroup;
     private String name;
     private Double value;
     @Enumerated(EnumType.STRING)

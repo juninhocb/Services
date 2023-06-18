@@ -24,9 +24,9 @@ public class MockInitializer implements CommandLineRunner {
     public void run(String... args) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String now = formatter.format(LocalDateTime.now());
-        Product product1 = new Product(1L,"Hamburguer", 1.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão", now);
-        Product product2 = new Product(2L,"Maça", 5.25, ProductType.ALIMENTOS, FeedSubProduct.FRUTAS_LEGUMES, UnitType.KG, "Komprão", now);
-        Product product3 = new Product(3L,"Leite", 4.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.LITRO, "Komprão", now);
+        Product product1 = new Product(1L,1L, "Hamburguer", 1.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão", now);
+        Product product2 = new Product(2L, 2L, "Maça", 5.25, ProductType.ALIMENTOS, FeedSubProduct.FRUTAS_LEGUMES, UnitType.KG, "Komprão", now);
+        Product product3 = new Product(3L, 1L,  "Leite", 4.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.LITRO, "Komprão", now);
         productService.mockProducts(Arrays.asList(product1, product2, product3));
     }
 }

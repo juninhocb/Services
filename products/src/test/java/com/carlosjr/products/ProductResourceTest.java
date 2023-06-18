@@ -5,18 +5,19 @@ import com.carlosjr.products.products.ProductDTO;
 import com.carlosjr.products.products.enums.FeedSubProduct;
 import com.carlosjr.products.products.enums.ProductType;
 import com.carlosjr.products.products.enums.UnitType;
-import org.apache.coyote.Response;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,9 +26,13 @@ public class ProductResourceTest {
     @Autowired
     TestRestTemplate restTemplate;
     private ProductDTO product;
+    private String basicUser;
+    private String basicPassword;
     @BeforeEach
     void setUp(){
-        product = new ProductDTO("Manteiga", 6.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão");
+        basicUser = "client";
+        basicPassword = "client";
+        product = new ProductDTO(1L, "Manteiga", 6.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão");
     }
     @Test
     public void shouldBeAbleToAccessPublicResource(){
@@ -38,7 +43,7 @@ public class ProductResourceTest {
     @Test
     public void shouldRetrieveAProductUsingValidId(){
         ResponseEntity<Product> response = restTemplate
-                .withBasicAuth("client", "client")
+                .withBasicAuth(basicUser, basicPassword)
                 .getForEntity("/products/find/1", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Product retrievedProduct = response.getBody();
@@ -48,22 +53,24 @@ public class ProductResourceTest {
     @Test
     public void shouldRespondNotFoundWhenTheResourceWasNotFound(){
         ResponseEntity<Product> response = restTemplate
-                .withBasicAuth("client", "client")
+                .withBasicAuth(basicUser, basicPassword)
                 .getForEntity("/products/find/99", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
+    @DirtiesContext
     public void shouldCreateAndGetTheResourcePath(){
         ResponseEntity<Void> response = restTemplate
-                .withBasicAuth("client", "client")
+                .withBasicAuth(basicUser, basicPassword)
                 .postForEntity("/products/create", product, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         URI resourcePath = response.getHeaders().getLocation();
         ResponseEntity<Product> response2 = restTemplate
-                .withBasicAuth("client", "client")
+                .withBasicAuth(basicUser, basicPassword)
                 .getForEntity(resourcePath, Product.class);
         Product comparableProduct = response2.getBody();
         ProductDTO comparableProductDTO = new ProductDTO(
+                comparableProduct.getOwnerGroup(),
                 comparableProduct.getName(),
                 comparableProduct.getValue(),
                 comparableProduct.getProductType(),
@@ -81,21 +88,37 @@ public class ProductResourceTest {
         invalidProduct.setMarketPlaceName("Giassi");
         invalidProduct.setProductType(ProductType.COSMETICOS);
         ResponseEntity<Void> response = restTemplate
-                .withBasicAuth("client", "client")
+                .withBasicAuth(basicUser, basicPassword)
                 .postForEntity("/products/create", invalidProduct, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         invalidProduct.setUnitType(UnitType.UNIDADE);
         invalidProduct.setValue(-2.6);
         ResponseEntity<Void> response2 = restTemplate
-                .withBasicAuth("client", "client")
+                .withBasicAuth(basicUser, basicPassword)
                 .postForEntity("/products/create", invalidProduct, Void.class);
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         invalidProduct.setValue(3.5);
         invalidProduct.setName("pão2");
         ResponseEntity<Void> response3 = restTemplate
-                .withBasicAuth("client", "client")
+                .withBasicAuth(basicUser, basicPassword)
                 .postForEntity("/products/create", invalidProduct, Void.class);
         assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+    @Test
+    public void shouldRetrieveAllItemsThatBelongsAGroup(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(Base64.encodeBase64String(String.format("%s:%s", basicUser,basicPassword).getBytes(StandardCharsets.UTF_8)));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        ResponseEntity<List<Product>> response = restTemplate
+                .exchange(
+                        "/products/find-all/group/1?page=0&size=2",
+                        HttpMethod.GET,
+                        new HttpEntity<>(headers),
+                        new ParameterizedTypeReference<List<Product>>() {}
+                );
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(2);
+    }
+
 
 }
