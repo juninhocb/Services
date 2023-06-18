@@ -42,9 +42,9 @@ public class ProductResource {
         return ResponseEntity.ok().body(products);
     }
 
-    @GetMapping(value = "/public")
+    @GetMapping(value = "/available")
     public ResponseEntity<String> publicRequest(){
-        return ResponseEntity.ok().body("Successfully accessed");
+        return ResponseEntity.ok().body("API is running");
     }
 
 

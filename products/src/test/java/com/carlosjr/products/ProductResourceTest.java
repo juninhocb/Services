@@ -37,8 +37,8 @@ public class ProductResourceTest {
     @Test
     public void shouldBeAbleToAccessPublicResource(){
         ResponseEntity<String> response = restTemplate
-                .getForEntity("/products/public", String.class);
-        assertThat(response.getBody()).isEqualTo("Successfully accessed");
+                .getForEntity("/products/available", String.class);
+        assertThat(response.getBody()).isEqualTo("API is running");
     }
     @Test
     public void shouldRetrieveAProductUsingValidId(){
