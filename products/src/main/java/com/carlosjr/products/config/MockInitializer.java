@@ -21,7 +21,7 @@ public class MockInitializer implements CommandLineRunner {
     ProductService productService;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String now = formatter.format(LocalDateTime.now());
         Product product1 = new Product(1L,"Hamburguer", 1.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão", now);

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,19 +21,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/products/public").permitAll()
                         .anyRequest().authenticated())
-                .csrf((csrf) -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder){
         User.UserBuilder users = User.builder();
-        UserDetails adam = users
-                .username("adam")
-                .password(passwordEncoder.encode("test"))
+        UserDetails clientService = users
+                .username("client")
+                .password(passwordEncoder.encode("client"))
                 .roles(new String[] {"Admin"})
                 .build();
-        return new InMemoryUserDetailsManager(adam);
+        return new InMemoryUserDetailsManager(clientService);
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
