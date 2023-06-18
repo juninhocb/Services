@@ -39,5 +39,7 @@ public class Product implements Serializable {
     private String marketPlaceName;
     @Column(name = "creation_date")
     private String creationDate;
+    @Column(name = "available_resource")
+    private Boolean isAvailable;
 
 }

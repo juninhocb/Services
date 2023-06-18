@@ -12,6 +12,9 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, PagingAndSortingRepository<Product, Long> {
-    @Query("SELECT p FROM Product p WHERE p.ownerGroup = :groupId")
+    @Query("SELECT p FROM Product p WHERE p.ownerGroup = :groupId AND p.isAvailable = true")
     List<Product> findAllByGroup(@Param("groupId") Long groupId, PageRequest createdDate);
+    @Query("SELECT p FROM Product p WHERE p.id = :productId AND p.ownerGroup = :groupId AND p.isAvailable = true")
+    Product findByProductIdAndGroupId(@Param("productId") Long productId, @Param("groupId") Long groupId);
+
 }

@@ -18,9 +18,9 @@ import java.util.List;
 public class ProductResource {
     @Autowired
     ProductService productService;
-    @GetMapping(value = "/find/{productId}")
-    public ResponseEntity<Product> findProductById(@PathVariable Long productId) {
-        Product product = productService.findProductById(productId);
+    @GetMapping(value = "/find/{productId}/{groupId}")
+    public ResponseEntity<Product> findProductById(@PathVariable(name="productId") Long productId,@PathVariable(name="groupId") Long groupId) {
+        Product product = productService.findProductById(productId, groupId);
         return ResponseEntity.ok().body(product);
     }
     @PostMapping(value = "/create")
@@ -29,8 +29,8 @@ public class ProductResource {
         BeanUtils.copyProperties(productDTO, product);
         long productId = productService.createProduct(product);
         URI resourcePath = ucb
-                .path("/products/find/{productId}")
-                .buildAndExpand(productId)
+                .path("/products/find/{productId}/{groupId}")
+                .buildAndExpand(productId, productDTO.ownerGroup())
                 .toUri();
         return ResponseEntity.created(resourcePath).build();
     }

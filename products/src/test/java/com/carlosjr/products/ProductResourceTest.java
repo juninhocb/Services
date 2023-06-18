@@ -44,7 +44,7 @@ public class ProductResourceTest {
     public void shouldRetrieveAProductUsingValidId(){
         ResponseEntity<Product> response = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .getForEntity("/products/find/1", Product.class);
+                .getForEntity("/products/find/1/1", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Product retrievedProduct = response.getBody();
         assertThat(retrievedProduct).isInstanceOf(Product.class);
@@ -54,7 +54,7 @@ public class ProductResourceTest {
     public void shouldRespondNotFoundWhenTheResourceWasNotFound(){
         ResponseEntity<Product> response = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .getForEntity("/products/find/99", Product.class);
+                .getForEntity("/products/find/99/1", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
