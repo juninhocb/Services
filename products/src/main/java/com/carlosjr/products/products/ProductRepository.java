@@ -25,5 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, PagingA
     void changeAvailableState (@Param("productId") Long productId, @Param("deletedDate")LocalDate deletedDate, @Param("isAvailable") boolean isAvailable);
     @Query("SELECT p FROM Product p WHERE p.id = :productId AND p.ownerGroup = :groupId")
     Product findProductByProductIdAndGroupId(@Param("productId") Long productId, @Param("groupId") Long groupId);
+    @Query("SELECT p FROM Product p WHERE p.isAvailable = false AND p.deletedDate > :comparableDate ")
+    List<Product> listOfNotAvailableProducts(@Param("comparableDate") LocalDate comparableData);
 
 }

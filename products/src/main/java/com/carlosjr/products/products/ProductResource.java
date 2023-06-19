@@ -34,26 +34,22 @@ public class ProductResource {
                 .toUri();
         return ResponseEntity.created(resourcePath).build();
     }
-
     @GetMapping(value = "/find-all/group/{groupId}")
     public ResponseEntity<List<Product>> findAllByGroup(@PathVariable(name = "groupId") Long groupId, Pageable pageable){
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSortOr(Sort.by(Sort.Direction.ASC,"creationDate" )));
         List<Product> products = productService.findAllProductsByGroup(groupId, pageRequest);
         return ResponseEntity.ok().body(products);
     }
-
     @PutMapping(value = "/safe-delete/{productId}/{groupId}")
     public ResponseEntity<Void> safeDelete(@PathVariable(name = "productId") Long productId, @PathVariable(name = "groupId") Long groupId){
         productService.safeDeleteProduct(productId, groupId);
         return ResponseEntity.ok().build();
     }
-
     @PutMapping(value = "/recover/{productId}/{groupId}")
     public ResponseEntity<Void> recoverResource(@PathVariable(name = "productId") Long productId, @PathVariable(name = "groupId") Long groupId){
         productService.recoverResource(productId, groupId);
         return ResponseEntity.ok().build();
     }
-
     @GetMapping(value = "/available")
     public ResponseEntity<String> publicRequest(){
         return ResponseEntity.ok().body("API is running");

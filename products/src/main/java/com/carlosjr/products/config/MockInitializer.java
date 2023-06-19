@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ public class MockInitializer implements CommandLineRunner {
         Product product1 = new Product(1L,1L, "Hamburguer", 1.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão", now, true, null);
         Product product2 = new Product(2L, 2L, "Maça", 5.25, ProductType.ALIMENTOS, FeedSubProduct.FRUTAS_LEGUMES, UnitType.KG, "Komprão", now, true, null);
         Product product3 = new Product(3L, 1L,  "Leite", 4.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.LITRO, "Komprão", now, true, null);
-        productService.mockProducts(Arrays.asList(product1, product2, product3));
+        Product product4 = new Product(4L, 1L, "Ketchup", 7.80, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão", now, false, LocalDate.now().plusDays(45));
+        productService.mockProducts(Arrays.asList(product1, product2, product3, product4));
     }
 }

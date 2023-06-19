@@ -55,10 +55,15 @@ public class ProductService {
         else
             throw new ResourceNotFoundException("The product with id " + productId + " was not found.");
     }
-
+    public List<Product> findAllNotAvailable() {
+        LocalDate comparableDay = LocalDate.now().plusDays(30);
+        return productRepository.listOfNotAvailableProducts(comparableDay);
+    }
+    public void hardDelete(Product product) {
+        productRepository.delete(product);
+    }
     @Scope("test")
     public void mockProducts(List<Product> products){
         productRepository.saveAll(products);
     }
-
 }
