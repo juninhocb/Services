@@ -119,7 +119,6 @@ public class ProductResourceTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().size()).isEqualTo(2);
     }
-
     @Test
     public void shouldNotRetrieveAnItemWhenTheOwnerIsNotAllowed(){
         ResponseEntity<Product> response = restTemplate
@@ -127,6 +126,48 @@ public class ProductResourceTest {
                 .getForEntity("/products/find/1/3", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
-
+    @Test
+    @DirtiesContext
+    public void shouldTemporarilyDeleteAResource(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(Base64.encodeBase64String(String.format("%s:%s", basicUser, basicPassword).getBytes(StandardCharsets.UTF_8)));
+        ResponseEntity<Void> response = restTemplate
+                .exchange(
+                        "/products/safe-delete/1/1",
+                        HttpMethod.PUT,
+                        new HttpEntity<>(headers),
+                        Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ResponseEntity<Product> response2 = restTemplate
+                .withBasicAuth(basicUser, basicPassword)
+                .getForEntity("/products/find/1/1", Product.class);
+        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+    @Test
+    @DirtiesContext
+    public void shouldRecoverAResourceAfterDelete(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(Base64.encodeBase64String(String.format("%s:%s",basicPassword, basicPassword).getBytes(StandardCharsets.UTF_8)));
+        ResponseEntity<Void> response = restTemplate
+                .exchange(
+                        "/products/safe-delete/1/1",
+                        HttpMethod.PUT,
+                        new HttpEntity<>(headers),
+                        Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ResponseEntity<Void> response2 = restTemplate
+                .exchange(
+                        "/products/recover/1/1",
+                        HttpMethod.PUT,
+                        new HttpEntity<>(headers),
+                        Void.class
+                        );
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ResponseEntity<Product> response3 = restTemplate
+                .withBasicAuth(basicUser, basicPassword)
+                .getForEntity("/products/find/1/1", Product.class);
+        assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
 
 }

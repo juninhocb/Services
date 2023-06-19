@@ -20,7 +20,7 @@ public class ProductResource {
     ProductService productService;
     @GetMapping(value = "/find/{productId}/{groupId}")
     public ResponseEntity<Product> findProductById(@PathVariable(name="productId") Long productId,@PathVariable(name="groupId") Long groupId) {
-        Product product = productService.findProductById(productId, groupId);
+        Product product = productService.findAvailableProductByIdAndGroup(productId, groupId);
         return ResponseEntity.ok().body(product);
     }
     @PostMapping(value = "/create")
@@ -40,6 +40,18 @@ public class ProductResource {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSortOr(Sort.by(Sort.Direction.ASC,"creationDate" )));
         List<Product> products = productService.findAllProductsByGroup(groupId, pageRequest);
         return ResponseEntity.ok().body(products);
+    }
+
+    @PutMapping(value = "/safe-delete/{productId}/{groupId}")
+    public ResponseEntity<Void> safeDelete(@PathVariable(name = "productId") Long productId, @PathVariable(name = "groupId") Long groupId){
+        productService.safeDeleteProduct(productId, groupId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(value = "/recover/{productId}/{groupId}")
+    public ResponseEntity<Void> recoverResource(@PathVariable(name = "productId") Long productId, @PathVariable(name = "groupId") Long groupId){
+        productService.recoverResource(productId, groupId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/available")

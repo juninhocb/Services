@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -41,5 +42,7 @@ public class Product implements Serializable {
     private String creationDate;
     @Column(name = "available_resource")
     private Boolean isAvailable;
+    @Column(name = "deleted_date")
+    private LocalDate deletedDate;
 
 }
