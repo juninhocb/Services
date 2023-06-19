@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/products")
+@RequestMapping(value = "/v1/products")
 public class ProductResource {
     @Autowired
     ProductService productService;
@@ -29,7 +29,7 @@ public class ProductResource {
         BeanUtils.copyProperties(productDTO, product);
         long productId = productService.createProduct(product);
         URI resourcePath = ucb
-                .path("/products/find/{productId}/{groupId}")
+                .path("/v1/products/find/{productId}/{groupId}")
                 .buildAndExpand(productId, productDTO.ownerGroup())
                 .toUri();
         return ResponseEntity.created(resourcePath).build();

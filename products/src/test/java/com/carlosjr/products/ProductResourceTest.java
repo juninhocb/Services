@@ -37,14 +37,14 @@ public class ProductResourceTest {
     @Test
     public void shouldBeAbleToAccessPublicResource(){
         ResponseEntity<String> response = restTemplate
-                .getForEntity("/products/available", String.class);
+                .getForEntity("/v1/products/available", String.class);
         assertThat(response.getBody()).isEqualTo("API is running");
     }
     @Test
     public void shouldRetrieveAProductUsingValidId(){
         ResponseEntity<Product> response = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .getForEntity("/products/find/1/1", Product.class);
+                .getForEntity("/v1/products/find/1/1", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Product retrievedProduct = response.getBody();
         assertThat(retrievedProduct).isInstanceOf(Product.class);
@@ -54,7 +54,7 @@ public class ProductResourceTest {
     public void shouldRespondNotFoundWhenTheResourceWasNotFound(){
         ResponseEntity<Product> response = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .getForEntity("/products/find/99/1", Product.class);
+                .getForEntity("/v1/products/find/99/1", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
@@ -62,7 +62,7 @@ public class ProductResourceTest {
     public void shouldCreateAndGetTheResourcePath(){
         ResponseEntity<Void> response = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .postForEntity("/products/create", product, Void.class);
+                .postForEntity("/v1/products/create", product, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         URI resourcePath = response.getHeaders().getLocation();
         ResponseEntity<Product> response2 = restTemplate
@@ -89,19 +89,19 @@ public class ProductResourceTest {
         invalidProduct.setProductType(ProductType.COSMETICOS);
         ResponseEntity<Void> response = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .postForEntity("/products/create", invalidProduct, Void.class);
+                .postForEntity("/v1/products/create", invalidProduct, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         invalidProduct.setUnitType(UnitType.UNIDADE);
         invalidProduct.setValue(-2.6);
         ResponseEntity<Void> response2 = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .postForEntity("/products/create", invalidProduct, Void.class);
+                .postForEntity("/v1/products/create", invalidProduct, Void.class);
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         invalidProduct.setValue(3.5);
         invalidProduct.setName("pão2");
         ResponseEntity<Void> response3 = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .postForEntity("/products/create", invalidProduct, Void.class);
+                .postForEntity("/v1/products/create", invalidProduct, Void.class);
         assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
@@ -111,7 +111,7 @@ public class ProductResourceTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         ResponseEntity<List<Product>> response = restTemplate
                 .exchange(
-                        "/products/find-all/group/1?page=0&size=2",
+                        "/v1/products/find-all/group/1?page=0&size=2",
                         HttpMethod.GET,
                         new HttpEntity<>(headers),
                         new ParameterizedTypeReference<List<Product>>() {}
@@ -123,7 +123,7 @@ public class ProductResourceTest {
     public void shouldNotRetrieveAnItemWhenTheOwnerIsNotAllowed(){
         ResponseEntity<Product> response = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .getForEntity("/products/find/1/3", Product.class);
+                .getForEntity("/v1/products/find/1/3", Product.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
@@ -133,14 +133,14 @@ public class ProductResourceTest {
         headers.setBasicAuth(Base64.encodeBase64String(String.format("%s:%s", basicUser, basicPassword).getBytes(StandardCharsets.UTF_8)));
         ResponseEntity<Void> response = restTemplate
                 .exchange(
-                        "/products/safe-delete/1/1",
+                        "/v1/products/safe-delete/1/1",
                         HttpMethod.PUT,
                         new HttpEntity<>(headers),
                         Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         ResponseEntity<Product> response2 = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .getForEntity("/products/find/1/1", Product.class);
+                .getForEntity("/v1/products/find/1/1", Product.class);
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
@@ -150,14 +150,14 @@ public class ProductResourceTest {
         headers.setBasicAuth(Base64.encodeBase64String(String.format("%s:%s",basicPassword, basicPassword).getBytes(StandardCharsets.UTF_8)));
         ResponseEntity<Void> response = restTemplate
                 .exchange(
-                        "/products/safe-delete/1/1",
+                        "/v1/products/safe-delete/1/1",
                         HttpMethod.PUT,
                         new HttpEntity<>(headers),
                         Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         ResponseEntity<Void> response2 = restTemplate
                 .exchange(
-                        "/products/recover/1/1",
+                        "/v1/products/recover/1/1",
                         HttpMethod.PUT,
                         new HttpEntity<>(headers),
                         Void.class
@@ -166,7 +166,7 @@ public class ProductResourceTest {
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
         ResponseEntity<Product> response3 = restTemplate
                 .withBasicAuth(basicUser, basicPassword)
-                .getForEntity("/products/find/1/1", Product.class);
+                .getForEntity("/v1/products/find/1/1", Product.class);
         assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
