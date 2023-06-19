@@ -30,8 +30,8 @@ public class ProductResourceTest {
     private String basicPassword;
     @BeforeEach
     void setUp(){
-        basicUser = "client";
-        basicPassword = "client";
+        basicUser = "full-client";
+        basicPassword = "admin";
         product = new ProductDTO(1L, "Manteiga", 6.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão");
     }
     @Test
@@ -147,7 +147,7 @@ public class ProductResourceTest {
     @DirtiesContext
     public void shouldRecoverAResourceAfterDelete(){
         HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(Base64.encodeBase64String(String.format("%s:%s",basicPassword, basicPassword).getBytes(StandardCharsets.UTF_8)));
+        headers.setBasicAuth(Base64.encodeBase64String(String.format("%s:%s",basicUser, basicPassword).getBytes(StandardCharsets.UTF_8)));
         ResponseEntity<Void> response = restTemplate
                 .exchange(
                         "/v1/products/safe-delete/1/1",
@@ -168,6 +168,14 @@ public class ProductResourceTest {
                 .withBasicAuth(basicUser, basicPassword)
                 .getForEntity("/v1/products/find/1/1", Product.class);
         assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+    @Test
+    @DirtiesContext
+    public void shouldForbidUnauthorizedClientToCreateAResource(){
+        ResponseEntity<Void> response = restTemplate
+                .withBasicAuth("safe-client", "basic")
+                .postForEntity("/v1/products/create", product, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
 }

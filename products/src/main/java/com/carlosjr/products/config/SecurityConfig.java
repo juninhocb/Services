@@ -2,7 +2,9 @@ package com.carlosjr.products.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
@@ -19,6 +21,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(HttpMethod.POST).hasRole("Write")
+                        .requestMatchers(HttpMethod.PUT).hasRole("Write")
                         .requestMatchers("/v1/products/available").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -27,13 +31,17 @@ public class SecurityConfig {
     }
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder){
-        User.UserBuilder users = User.builder();
-        UserDetails clientService = users
-                .username("client")
-                .password(passwordEncoder.encode("client"))
-                .roles(new String[] {"Admin"})
+        UserDetails fullClient = User.builder()
+                .username("full-client")
+                .password(passwordEncoder.encode("admin"))
+                .roles(new String[] {"Write" , "Read"})
                 .build();
-        return new InMemoryUserDetailsManager(clientService);
+        UserDetails safeClient = User.builder()
+                .username("safe-client")
+                .password(passwordEncoder.encode("basic"))
+                .roles(new String[] {"Read"})
+                .build();
+        return new InMemoryUserDetailsManager(fullClient, safeClient);
     }
     @Bean
     public PasswordEncoder passwordEncoder() {

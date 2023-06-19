@@ -55,5 +55,4 @@ public class ProductResource {
         return ResponseEntity.ok().body("API is running");
     }
 
-
 }
