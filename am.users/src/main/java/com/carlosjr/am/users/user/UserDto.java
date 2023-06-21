@@ -1,3 +1,7 @@
 package com.carlosjr.am.users.user;
-public record UserDto(String fullName, String username, String password, String email) {
+
+import lombok.Builder;
+
+@Builder
+public record UserDto(Long groupId, String fullName, String username, String password, String email) {
 }

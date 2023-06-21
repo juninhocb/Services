@@ -3,6 +3,7 @@ package com.carlosjr.am.users.user;
 import com.carlosjr.am.users.roles.Roles;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,10 +24,12 @@ public class User implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    /*@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(length = 36, updatable = false, nullable = false)*/
+    private Long id;
+    @Column(name = "group_id")
+    private Long groupId;
     @Column(name = "full_name")
     private String fullName;
     @Column(unique = true)
@@ -37,11 +40,12 @@ public class User implements Serializable {
     @ManyToMany(mappedBy = "users")
     private Set<Roles> roles;
     private Boolean active;
-    @CreatedDate
+    @CreationTimestamp
     @Column(name = "created_date", updatable = false)
     private Timestamp createdDate;
     @UpdateTimestamp
     @Column(name = "updated_date")
     private Timestamp updatedDate;
+    private String currentAccessToken;
 
 }

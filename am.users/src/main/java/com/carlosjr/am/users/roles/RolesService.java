@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class RolesService {
-
     @Autowired
     private RolesRepository rolesRepository;
     public Roles getRoleById(Long id){
@@ -18,7 +17,7 @@ public class RolesService {
     public long getRepositoryCount(){
         return rolesRepository.count();
     }
-    public void mockRoles(List<Roles> roles){
+    protected void mockRoles(List<Roles> roles){
         rolesRepository.saveAll(roles);
     }
     public Set<Roles> findBasicRoles(){
