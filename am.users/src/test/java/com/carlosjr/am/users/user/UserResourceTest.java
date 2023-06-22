@@ -64,6 +64,17 @@ class UserResourceTest {
                 .postForEntity(BASE_URL, getInvalidDto(InvalidUserDto.INVALID_NAME), Void.class);
         assertThat(getCreateResponse5.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+    @Test
+    void shouldRespondWithNotFoundWhenResourceIsNotFound(){
+        ResponseEntity<User> getResponse = restTemplate
+                .getForEntity(BASE_URL+"/99", User.class);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+    @Test
+    void shouldUpdateUser(){
+
+    }
+
     private UserDto getInvalidDto(InvalidUserDto invalidUserDto) {
         UserDto.UserDtoBuilder builder = UserDto.builder()
                 .fullName("Testing")

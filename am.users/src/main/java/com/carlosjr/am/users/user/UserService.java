@@ -1,5 +1,6 @@
 package com.carlosjr.am.users.user;
 
+import com.carlosjr.am.users.exceptions.ResourceNotFoundException;
 import com.carlosjr.am.users.roles.RolesService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class UserService {
     private RolesService rolesService;
     public User findUserById(Long id){
         Optional<User> userOpt = userRepository.findById(id);
-        return userOpt.orElseThrow();
+        return userOpt.orElseThrow(() -> new ResourceNotFoundException(String.format("Resource with id = %d was not found in database", id)));
     }
     public List<User> findAllUsers(){
         return userRepository.findAll();
@@ -34,7 +35,6 @@ public class UserService {
         }
         return null;
     }
-
     public void updateUser(Long id, UserDto userDto){
         findUserById(id);
         User user = new User();

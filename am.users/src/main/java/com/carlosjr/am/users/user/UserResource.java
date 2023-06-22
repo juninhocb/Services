@@ -2,6 +2,7 @@ package com.carlosjr.am.users.user;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -26,7 +27,11 @@ public class UserResource {
                 .toUri();
         return ResponseEntity.created(resourcePath).build();
     }
-
+    @PutMapping("/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void updateUser(@Valid @RequestBody UserDto userDto, @PathVariable(name = "userId") Long id){
+        userService.updateUser(id, userDto);
+    }
 
 
 }
