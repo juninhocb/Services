@@ -1,5 +1,6 @@
 package com.carlosjr.am.users.user;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class UserResource {
         return ResponseEntity.ok().body(userService.findUserById(id));
     }
     @PostMapping
-    public ResponseEntity<Void> createNewUser(@RequestBody UserDto userDto, UriComponentsBuilder ucb){
+    public ResponseEntity<Void> createNewUser(@Valid @RequestBody UserDto userDto, UriComponentsBuilder ucb){
         Long id = userService.createNewUser(userDto);
         URI resourcePath = ucb
                 .path("/v1/users/{userId}")
