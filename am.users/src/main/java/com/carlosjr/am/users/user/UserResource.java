@@ -33,5 +33,17 @@ public class UserResource {
         userService.updateUser(id, userDto);
     }
 
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable(name = "userId") Long id){
+        userService.deleteUser(id);
+    }
+
+    @PutMapping("/roles/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void updateUserRoles(@PathVariable(name = "userId") Long id,
+                                @RequestParam(name = "isAdmin") Boolean isAdmin){
+        userService.updateRoles(id, isAdmin);
+    }
 
 }

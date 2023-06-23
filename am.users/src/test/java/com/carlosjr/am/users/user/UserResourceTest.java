@@ -5,14 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+//TODO: refactor tests to avoid create user when dealing with it
+@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserResourceTest {
     @Autowired
@@ -71,8 +73,40 @@ class UserResourceTest {
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
-    void shouldUpdateUser(){
+    @DirtiesContext
+    void shouldUpdateUser() {
+        ResponseEntity<Void> getCreateResponse = restTemplate
+                .postForEntity(BASE_URL, testUserDto, Void.class);
+        assertThat(getCreateResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        URI uri = getCreateResponse.getHeaders().getLocation();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        ResponseEntity<Void> getUpdateResponse = restTemplate
+                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(testUserDto, headers), Void.class );
+        assertThat(getUpdateResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+    @Test
+    @DirtiesContext
+    void shouldDeleteResource(){
+        ResponseEntity<Void> getCreateResponse = restTemplate
+                .postForEntity(BASE_URL, testUserDto, Void.class);
+        URI uri = getCreateResponse.getHeaders().getLocation();
+        ResponseEntity<Void> getDeleteResponse = restTemplate
+                .exchange(uri, HttpMethod.DELETE, null, Void.class);
+        assertThat(getDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        ResponseEntity<UserDto> getFindResponse = restTemplate
+                .getForEntity(uri, UserDto.class);
+        assertThat(getFindResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
 
+    @Test
+    @DirtiesContext
+    void shouldUpdateRoles(){
+        ResponseEntity<Void> getCreateResponse = restTemplate
+                .postForEntity(BASE_URL, testUserDto, Void.class); //expect user with id 1
+        ResponseEntity<Void> getUpdateRoleResponse = restTemplate
+                .exchange(BASE_URL+"/roles/1?isAdmin=true", HttpMethod.PUT, null, Void.class);
+        assertThat(getUpdateRoleResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     private UserDto getInvalidDto(InvalidUserDto invalidUserDto) {

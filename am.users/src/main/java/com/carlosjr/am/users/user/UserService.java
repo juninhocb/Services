@@ -36,8 +36,7 @@ public class UserService {
         return null;
     }
     public void updateUser(Long id, UserDto userDto){
-        findUserById(id);
-        User user = new User();
+        User user = findUserById(id);
         BeanUtils.copyProperties(userDto, user);
         userRepository.save(user);
     }
