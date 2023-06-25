@@ -29,7 +29,7 @@ class UserServiceTest {
     @Test
     @DirtiesContext
     void createNewUserTest() {
-        Long id  = userService.createNewUser(testUserDto);
+        UUID id  = userService.createNewUser(testUserDto);
         assertThat(id).isNotNull();
     }
 }

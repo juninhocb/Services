@@ -1,5 +1,7 @@
 package com.carlosjr.am.users.roles;
 
+import com.carlosjr.am.users.user.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,16 +10,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class RolesService {
-    @Autowired
-    private RolesRepository rolesRepository;
+    private final RolesRepository rolesRepository;
     public Roles getRoleById(Long id){
         return rolesRepository.getReferenceById(id);
     }
     public long getRepositoryCount(){
         return rolesRepository.count();
     }
-    protected void mockRoles(List<Roles> roles){
+    public void mockRoles(List<Roles> roles){
         rolesRepository.saveAll(roles);
     }
     public Set<Roles> findBasicRoles(){
@@ -26,5 +28,7 @@ public class RolesService {
     public Set<Roles> findAllRoles(){
         return rolesRepository.findAll().stream().collect(Collectors.toSet());
     }
-
+    public boolean isAdmin(User user){
+        return user.getRoles().contains(findAllRoles());
+    }
 }

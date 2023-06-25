@@ -1,5 +1,7 @@
 package com.carlosjr.am.users.user;
 
+import com.carlosjr.am.users.roles.RolesService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,17 +12,20 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-//TODO: refactor tests to avoid create user when dealing with it
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserResourceTest {
     @Autowired
     private TestRestTemplate restTemplate;
+    @Autowired
+    private RolesService rolesService;
     private UserDto testUserDto;
     private final String BASE_URL = "/v1/users";
+    private URI resourcePath;
+    private String idResource;
     @BeforeEach
     void setUp() {
         testUserDto = UserDto
@@ -31,12 +36,31 @@ class UserResourceTest {
                 .username("juninhocb")
                 .groupId(1L)
                 .build();
+        ResponseEntity<Void> getUriOfCreatedUser = restTemplate
+                .postForEntity(BASE_URL, testUserDto, Void.class);
+        resourcePath = getUriOfCreatedUser.getHeaders().getLocation();
+        idResource = resourcePath.toString().split(BASE_URL+"/")[1];
+
     }
+    @AfterEach
+    void tearDown(){
+        restTemplate.exchange(BASE_URL+idResource, HttpMethod.DELETE, null, Void.class);
+    }
+
     @Test
     @DirtiesContext
     void shouldCreateAndGetLocationOfAValidResource(){
         ResponseEntity<Void> getCreateResponse = restTemplate
-                .postForEntity(BASE_URL, testUserDto, Void.class);
+                .postForEntity(
+                        BASE_URL,
+                        UserDto.builder()
+                                .fullName("Alfredo John")
+                                .email("af123@example.com")
+                                .password("af123")
+                                .username("alfredo.j")
+                                .groupId(1L)
+                                .build(),
+                        Void.class);
         assertThat(getCreateResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         URI uri = getCreateResponse.getHeaders().getLocation();
         ResponseEntity<User> getResourceResponse = restTemplate
@@ -46,7 +70,7 @@ class UserResourceTest {
         assertThat(createdUser.getCreatedDate()).isNotNull();
         assertThat(createdUser.getActive()).isNotNull();
         assertThat(createdUser.getRoles()).isNotNull();
-        assertThat(createdUser.getEmail()).isEqualTo("juninhocb@hotmail.com");
+        assertThat(createdUser.getEmail()).isEqualTo("af123@example.com");
     }
     @Test
     void shouldNotSaveAnInvalidUserDto(){
@@ -69,44 +93,49 @@ class UserResourceTest {
     @Test
     void shouldRespondWithNotFoundWhenResourceIsNotFound(){
         ResponseEntity<User> getResponse = restTemplate
-                .getForEntity(BASE_URL+"/99", User.class);
+                .getForEntity(BASE_URL+"/"+UUID.randomUUID(), User.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
     @DirtiesContext
     void shouldUpdateUser() {
-        ResponseEntity<Void> getCreateResponse = restTemplate
-                .postForEntity(BASE_URL, testUserDto, Void.class);
-        assertThat(getCreateResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        URI uri = getCreateResponse.getHeaders().getLocation();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         ResponseEntity<Void> getUpdateResponse = restTemplate
-                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(testUserDto, headers), Void.class );
+                .exchange(resourcePath, HttpMethod.PUT, new HttpEntity<>(UserDto.builder()
+                        .fullName("Alfredo John")
+                        .email("af123@example.com")
+                        .password("af123")
+                        .username("alfredo.j")
+                        .groupId(1L)
+                        .build(), headers), Void.class );
         assertThat(getUpdateResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        ResponseEntity<User> getResourceAgain = restTemplate
+                .getForEntity(resourcePath, User.class);
+        assertThat(getResourceAgain.getBody().getEmail()).isEqualTo("af123@example.com");
     }
     @Test
     @DirtiesContext
     void shouldDeleteResource(){
-        ResponseEntity<Void> getCreateResponse = restTemplate
-                .postForEntity(BASE_URL, testUserDto, Void.class);
-        URI uri = getCreateResponse.getHeaders().getLocation();
         ResponseEntity<Void> getDeleteResponse = restTemplate
-                .exchange(uri, HttpMethod.DELETE, null, Void.class);
+                .exchange(resourcePath, HttpMethod.DELETE, null, Void.class);
         assertThat(getDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         ResponseEntity<UserDto> getFindResponse = restTemplate
-                .getForEntity(uri, UserDto.class);
+                .getForEntity(resourcePath, UserDto.class);
         assertThat(getFindResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
-
     @Test
     @DirtiesContext
     void shouldUpdateRoles(){
-        ResponseEntity<Void> getCreateResponse = restTemplate
-                .postForEntity(BASE_URL, testUserDto, Void.class); //expect user with id 1
         ResponseEntity<Void> getUpdateRoleResponse = restTemplate
-                .exchange(BASE_URL+"/roles/1?isAdmin=true", HttpMethod.PUT, null, Void.class);
+                .exchange(BASE_URL+"/roles/" + idResource + "?isAdmin=true", HttpMethod.PUT, null, Void.class);
         assertThat(getUpdateRoleResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        ResponseEntity<User> getUpdatedResource = restTemplate
+                .getForEntity(resourcePath, User.class);
+        User user = getUpdatedResource.getBody();
+        //fixme: incorrect update, but user was really updated in database...
+        assertThat(rolesService.isAdmin(user)).isTrue();
+
     }
 
     private UserDto getInvalidDto(InvalidUserDto invalidUserDto) {
