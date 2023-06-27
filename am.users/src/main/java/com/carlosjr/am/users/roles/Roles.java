@@ -1,6 +1,7 @@
 package com.carlosjr.am.users.roles;
 
 import com.carlosjr.am.users.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -23,11 +24,7 @@ public class Roles implements Serializable {
     private Long id;
     private String name;
     private Boolean isBasic;
-    @ManyToMany
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<User> users;
 }

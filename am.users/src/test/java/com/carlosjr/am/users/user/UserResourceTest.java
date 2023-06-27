@@ -131,7 +131,7 @@ class UserResourceTest {
                 .exchange(BASE_URL+"/roles/" + idResource + "?isAdmin=true", HttpMethod.PUT, null, Void.class);
         assertThat(getUpdateRoleResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         ResponseEntity<User> getUpdatedResource = restTemplate
-                .getForEntity(resourcePath, User.class);
+                .getForEntity(BASE_URL+"/"+idResource, User.class);
         User user = getUpdatedResource.getBody();
         //fixme: incorrect update, but user was really updated in database...
         assertThat(rolesService.isAdmin(user)).isTrue();

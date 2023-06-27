@@ -29,6 +29,6 @@ public class RolesService {
         return rolesRepository.findAll().stream().collect(Collectors.toSet());
     }
     public boolean isAdmin(User user){
-        return user.getRoles().contains(findAllRoles());
+        return user.getRoles().size() == 4;
     }
 }

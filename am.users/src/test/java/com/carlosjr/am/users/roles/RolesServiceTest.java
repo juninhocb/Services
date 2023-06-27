@@ -39,8 +39,8 @@ class RolesServiceTest {
         boolean isAdmin = rolesService.isAdmin(user);
         assertThat(isAdmin).isFalse();
         userService.updateRoles(user.getId(), true);
-        //fixme
-        /*isAdmin = rolesService.isAdmin(user);
-        assertThat(isAdmin).isTrue();*/
+        User userComparable = userService.findUserById(user.getId());
+        isAdmin = rolesService.isAdmin(userComparable);
+        assertThat(isAdmin).isTrue();
     }
 }

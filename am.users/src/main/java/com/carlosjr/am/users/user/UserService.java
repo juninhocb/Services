@@ -48,5 +48,6 @@ public class UserService {
         } else {
             user.setRoles(rolesService.findBasicRoles());
         }
+        userRepository.save(user);
     }
 }
