@@ -1,5 +1,7 @@
 package com.carlosjr.am.users.boostrap;
 
+import com.carlosjr.am.users.bank.BankAccountDto;
+import com.carlosjr.am.users.bank.BankAccountService;
 import com.carlosjr.am.users.roles.Roles;
 import com.carlosjr.am.users.roles.RolesService;
 import com.carlosjr.am.users.user.User;
@@ -16,11 +18,13 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class MockData implements CommandLineRunner {
     private final UserRepository userRepository;
+    private final BankAccountService bankAccountService;
     private final RolesService rolesService;
     @Override
     public void run(String... args) throws Exception {
         loadRoles();
         loadUsers();
+        loadBankAccounts();
     }
     private void loadRoles(){
         if(rolesService.getRepositoryCount() == 0){
@@ -32,7 +36,6 @@ public class MockData implements CommandLineRunner {
 
         }
     }
-
     private void loadUsers(){
         User u1 = User.builder()
                 .groupId(1L)
@@ -65,6 +68,29 @@ public class MockData implements CommandLineRunner {
                 .build();
 
         userRepository.saveAll(Arrays.asList(u1,u2,u3));
+    }
 
+    private void loadBankAccounts() {
+        if(bankAccountService.getRepositorySize() == 0){
+            BankAccountDto bankAccount1 = BankAccountDto.builder()
+                    .accountNumber(38423432L)
+                    .name("Bradesco 123")
+                    .user(userRepository.getUserByUsername("jongreen"))
+                    .build();
+            BankAccountDto bankAccount2 = BankAccountDto.builder()
+                    .accountNumber(38423433L)
+                    .name("BB 123")
+                    .user(userRepository.getUserByUsername("jongreen"))
+                    .build();
+            BankAccountDto bankAccount3 = BankAccountDto.builder()
+                    .accountNumber(38423434L)
+                    .name("Sicredi 123")
+                    .user(userRepository.getUserByUsername("jongreen"))
+                    .build();
+
+            bankAccountService.createNewBankAccount(bankAccount1);
+            bankAccountService.createNewBankAccount(bankAccount2);
+            bankAccountService.createNewBankAccount(bankAccount3);
+        }
     }
 }

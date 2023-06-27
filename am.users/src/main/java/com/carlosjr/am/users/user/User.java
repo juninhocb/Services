@@ -1,5 +1,6 @@
 package com.carlosjr.am.users.user;
 
+import com.carlosjr.am.users.bank.BankAccount;
 import com.carlosjr.am.users.roles.Roles;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,6 +37,8 @@ public class User implements Serializable {
     private String password;
     @Column(unique = true)
     private String email;
+    @OneToMany(mappedBy = "user")
+    private Set<BankAccount> bankAccounts;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",

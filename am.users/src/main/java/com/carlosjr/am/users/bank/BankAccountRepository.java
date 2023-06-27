@@ -1,10 +1,8 @@
-package com.carlosjr.am.users.user;
+package com.carlosjr.am.users.bank;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.UUID;
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
-    User getUserByUsername(String username);
+public interface BankAccountRepository extends JpaRepository<BankAccount, UUID> {
 }
