@@ -1,11 +1,21 @@
 package com.carlosjr.am.users.user;
 
+import com.carlosjr.am.users.roles.Roles;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 
+import java.util.Set;
+import java.util.UUID;
+
 @Builder
 public record UserDto(
+        @Null
+        UUID id,
+        @Null
+        Set<Roles> roles,
+        @Null
+        Boolean active,
         @NotNull
         @Positive
         @JsonProperty("group_id")

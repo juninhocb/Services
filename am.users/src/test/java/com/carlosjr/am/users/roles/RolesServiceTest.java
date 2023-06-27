@@ -2,6 +2,7 @@ package com.carlosjr.am.users.roles;
 
 import com.carlosjr.am.users.user.User;
 import com.carlosjr.am.users.user.UserDto;
+import com.carlosjr.am.users.user.UserMapper;
 import com.carlosjr.am.users.user.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,17 +17,19 @@ class RolesServiceTest {
     private UserService userService;
     @Autowired
     private RolesService rolesService;
+    @Autowired
+    private UserMapper userMapper;
     private User user;
     @BeforeEach
     void setUp() {
-        user = userService.findUserById(userService.createNewUser(UserDto
+        user = userMapper.userDtoToUser(userService.findUserById(userService.createNewUser(UserDto
                 .builder()
                 .fullName("Richard Test Red")
                 .email("rts123@example.com")
                 .password("richard123")
                 .username("r198")
                 .groupId(1L)
-                .build()));
+                .build())));
     }
 
     @AfterEach
@@ -39,7 +42,7 @@ class RolesServiceTest {
         boolean isAdmin = rolesService.isAdmin(user);
         assertThat(isAdmin).isFalse();
         userService.updateRoles(user.getId(), true);
-        User userComparable = userService.findUserById(user.getId());
+        User userComparable = userMapper.userDtoToUser(userService.findUserById(user.getId()));
         isAdmin = rolesService.isAdmin(userComparable);
         assertThat(isAdmin).isTrue();
     }

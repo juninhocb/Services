@@ -25,7 +25,7 @@ class UserResourceTest {
     private UserDto testUserDto;
     private final String BASE_URL = "/v1/users";
     private URI resourcePath;
-    private String idResource;
+    private static String idResource;
     @BeforeEach
     void setUp() {
         testUserDto = UserDto
@@ -39,11 +39,13 @@ class UserResourceTest {
         ResponseEntity<Void> getUriOfCreatedUser = restTemplate
                 .postForEntity(BASE_URL, testUserDto, Void.class);
         resourcePath = getUriOfCreatedUser.getHeaders().getLocation();
-        idResource = resourcePath.toString().split(BASE_URL+"/")[1];
-
+        if (resourcePath != null){
+            idResource = resourcePath.toString().split(BASE_URL+"/")[1];
+        }
     }
     @AfterEach
     void tearDown(){
+        //when dirties context fail
         restTemplate.exchange(BASE_URL+idResource, HttpMethod.DELETE, null, Void.class);
     }
 
@@ -63,14 +65,11 @@ class UserResourceTest {
                         Void.class);
         assertThat(getCreateResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         URI uri = getCreateResponse.getHeaders().getLocation();
-        ResponseEntity<User> getResourceResponse = restTemplate
-                .getForEntity(uri, User.class);
+        ResponseEntity<UserDto> getResourceResponse = restTemplate
+                .getForEntity(uri, UserDto.class);
         assertThat(getResourceResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        User createdUser = getResourceResponse.getBody();
-        assertThat(createdUser.getCreatedDate()).isNotNull();
-        assertThat(createdUser.getActive()).isNotNull();
-        assertThat(createdUser.getRoles()).isNotNull();
-        assertThat(createdUser.getEmail()).isEqualTo("af123@example.com");
+        UserDto createdUser = getResourceResponse.getBody();
+        assertThat(createdUser.email()).isEqualTo("af123@example.com");
     }
     @Test
     void shouldNotSaveAnInvalidUserDto(){
@@ -110,9 +109,9 @@ class UserResourceTest {
                         .groupId(1L)
                         .build(), headers), Void.class );
         assertThat(getUpdateResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        ResponseEntity<User> getResourceAgain = restTemplate
-                .getForEntity(resourcePath, User.class);
-        assertThat(getResourceAgain.getBody().getEmail()).isEqualTo("af123@example.com");
+        ResponseEntity<UserDto> getResourceAgain = restTemplate
+                .getForEntity(resourcePath, UserDto.class);
+        assertThat(getResourceAgain.getBody().email()).isEqualTo("af123@example.com");
     }
     @Test
     @DirtiesContext
@@ -133,7 +132,6 @@ class UserResourceTest {
         ResponseEntity<User> getUpdatedResource = restTemplate
                 .getForEntity(BASE_URL+"/"+idResource, User.class);
         User user = getUpdatedResource.getBody();
-        //fixme: incorrect update, but user was really updated in database...
         assertThat(rolesService.isAdmin(user)).isTrue();
 
     }

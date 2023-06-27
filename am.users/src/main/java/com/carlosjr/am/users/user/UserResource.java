@@ -2,7 +2,6 @@ package com.carlosjr.am.users.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,7 @@ import java.util.UUID;
 public class UserResource {
     private final UserService userService;
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable(value = "userId") UUID id){
+    public ResponseEntity<UserDto> getUserById(@PathVariable(value = "userId") UUID id){
         return ResponseEntity.ok().body(userService.findUserById(id));
     }
     @PostMapping
@@ -32,7 +31,7 @@ public class UserResource {
     @PutMapping("/{userId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void updateUser(@Valid @RequestBody UserDto userDto, @PathVariable(name = "userId") UUID id){
-        userService.updateUser(id, userDto);
+        userService.updateUser(userDto, id);
     }
 
     @DeleteMapping("/{userId}")
