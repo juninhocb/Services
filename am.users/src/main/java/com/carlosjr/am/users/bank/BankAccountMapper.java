@@ -13,5 +13,13 @@ public class BankAccountMapper {
                 .user(bankAccountDto.user())
                 .build();
     }
+    public BankAccountDto bankAccountDtoFromEntity(BankAccount bankAccount){
+        return BankAccountDto.builder()
+                .name(bankAccount.getName())
+                .accountNumber(bankAccount.getAccountNumber())
+                .user(bankAccount.getUser())
+                .amount(bankAccount.getAmount())
+                .build();
+    }
 
 }
