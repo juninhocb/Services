@@ -4,7 +4,6 @@ import com.carlosjr.am.users.user.User;
 import com.carlosjr.am.users.user.UserDto;
 import com.carlosjr.am.users.user.UserMapper;
 import com.carlosjr.am.users.user.UserService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,88 +14,53 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 class BankAccountServiceTest {
-
     @Autowired
     private BankAccountService bankAccountService;
     @Autowired
     private UserService userService;
     @Autowired
     private UserMapper userMapper;
-    private BankAccountDto bankAccountDto;
-    private static User user;
-
-    @BeforeEach
-    void setUp() {
-        userService.createNewUser(UserDto
-                .builder()
-                .fullName("Carlos Eduardo Junior")
-                .email("juninhocb@hotmail.com")
-                .password("palmeiras2")
-                .username("juninhocbb")
-                .groupId(1L)
-                .build()
-        );
-
-        if (user == null){
-            user = userService.findUserByUsername("juninhocbb");
-        }
-
-        if (bankAccountDto == null){
-            bankAccountDto = BankAccountDto
-                    .builder()
-                    .user(user)
-                    .accountNumber(123143L)
-                    .name("Sicob 123")
-                    .build();
-        }
-    }
+    private static UUID uuidGeneral = null;
 
     @Test
     @DirtiesContext
     void shouldCreateNewBankAccount() {
         long banksInDatabase = bankAccountService.getRepositorySize();
         System.out.println("database: " + banksInDatabase);  //ensure that has 3...
-        UUID createdId = bankAccountService.createNewBankAccount(bankAccountDto);
-        assertThat(createdId).isNotNull();
+        getBankAccountUuid();
         assertThat(bankAccountService.getRepositorySize()).isEqualTo(banksInDatabase+1);
     }
 
     @Test
     @DirtiesContext
     void shouldCreateUpdateAndRetrieveABankAccountById(){
-        UUID savedBankAccountDtoId = bankAccountService.createNewBankAccount(bankAccountDto);
-        assertThat(savedBankAccountDtoId).isNotNull();
+        UUID uuid = getBankAccountUuid();
         BankAccountDto updateBankAccountDto = BankAccountDto
                 .builder()
-                .user(user)
+                .user(bankAccountService.findBankAccountById(uuid).user())
                 .accountNumber(123143L)
                 .name("Another label to this bank")
                 .build();
-        bankAccountService.updateBankAccount(savedBankAccountDtoId, updateBankAccountDto);
-        BankAccountDto updatedBankAccountDto = bankAccountService.findBankAccountById(savedBankAccountDtoId);
+        bankAccountService.updateBankAccount(uuid, updateBankAccountDto);
+        BankAccountDto updatedBankAccountDto = bankAccountService.findBankAccountById(uuid);
         assertThat(updatedBankAccountDto.name()).isEqualTo("Another label to this bank");
     }
 
     @Test
     @DirtiesContext
     void shouldToggleBankAccountActive(){
-        UUID savedBankAccountDtoId = bankAccountService.createNewBankAccount(bankAccountDto);
-        assertThat(savedBankAccountDtoId).isNotNull();
-        bankAccountService.toggleBankAccount(savedBankAccountDtoId);
-        //fixme: use DTO
-        BankAccount updatedBankAccount = bankAccountService.retrieveBankAccountEntity(savedBankAccountDtoId);
+        UUID uuid = getBankAccountUuid();
+        bankAccountService.toggleBankAccount(uuid);
+        BankAccount updatedBankAccount = bankAccountService.retrieveBankAccountEntity(uuid);
         assertThat(updatedBankAccount.getIsActive()).isEqualTo(false);
     }
 
     @Test
     @DirtiesContext
     void shouldDepositAmount(){
-        UUID savedBankAccountDtoId = bankAccountService.createNewBankAccount(bankAccountDto);
-        assertThat(savedBankAccountDtoId).isNotNull();
+        UUID savedBankAccountDtoId = getBankAccountUuid();
         bankAccountService.depositAmount(savedBankAccountDtoId, new BigDecimal(4));
         BankAccountDto updatedBankAccount = bankAccountService.findBankAccountById(savedBankAccountDtoId);
         assertThat(updatedBankAccount.amount()).isGreaterThan(new BigDecimal(0));
@@ -105,14 +69,32 @@ class BankAccountServiceTest {
     @Test
     @DirtiesContext
     void shouldWithdrawAmount(){
-        UUID savedBankAccountDtoId = bankAccountService.createNewBankAccount(bankAccountDto);
-        assertThat(savedBankAccountDtoId).isNotNull();
+        UUID savedBankAccountDtoId = getBankAccountUuid();
         bankAccountService.withdrawAmount(savedBankAccountDtoId, new BigDecimal(4));
         BankAccountDto updatedBankAccount = bankAccountService.findBankAccountById(savedBankAccountDtoId);
         assertThat(updatedBankAccount.amount()).isNotZero();
     }
 
-
-
-
+    private UUID getBankAccountUuid(){
+        if (uuidGeneral == null){
+            userService.createNewUser(UserDto
+                    .builder()
+                    .fullName("Carlos Eduardo Junior")
+                    .email("juninhocb@hotmail.com")
+                    .password("palmeiras2")
+                    .username("juninhocbb")
+                    .groupId(1L)
+                    .build()
+            );
+            User user = userService.findUserByUsername("juninhocbb");
+            BankAccountDto bankAccountDto = BankAccountDto
+                    .builder()
+                    .user(user)
+                    .accountNumber(123143L)
+                    .name("Sicob 123")
+                    .build();
+            return bankAccountService.createNewBankAccount(bankAccountDto);
+        }
+        return uuidGeneral;
+    }
 }
