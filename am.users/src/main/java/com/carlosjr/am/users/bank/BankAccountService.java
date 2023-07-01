@@ -3,7 +3,6 @@ package com.carlosjr.am.users.bank;
 import com.carlosjr.am.users.exceptions.ResourceNotFoundException;
 import com.carlosjr.am.users.exceptions.SameFieldExceptionHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -68,10 +67,8 @@ public class BankAccountService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Resource with id = %s was not found in database", id)));
     }
 
-    @Scope("test")
-    public void deleteBankAccount(UUID uuid){
-
-
+    public BankAccount findAccountByAccountNumber(Long accountNumber){
+        return bankAccountRepository.findByAccountNumber(accountNumber);
     }
 
 

@@ -2,6 +2,7 @@ package com.carlosjr.am.users.user;
 
 import com.carlosjr.am.users.bank.BankAccount;
 import com.carlosjr.am.users.roles.Roles;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.*;
@@ -38,6 +39,7 @@ public class User implements Serializable {
     @Column(unique = true)
     private String email;
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<BankAccount> bankAccounts;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

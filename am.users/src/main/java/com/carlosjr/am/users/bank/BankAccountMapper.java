@@ -19,6 +19,7 @@ public class BankAccountMapper {
                 .accountNumber(bankAccount.getAccountNumber())
                 .user(bankAccount.getUser())
                 .amount(bankAccount.getAmount())
+                .isActive(bankAccount.getIsActive())
                 .build();
     }
 
