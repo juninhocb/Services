@@ -1,6 +1,5 @@
 package com.carlosjr.am.users.bank;
 
-import com.carlosjr.am.users.user.User;
 import com.carlosjr.am.users.user.UserDto;
 import com.carlosjr.am.users.user.UserMapper;
 import com.carlosjr.am.users.user.UserService;
@@ -15,13 +14,15 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class BankAccountServiceTest {
+class bankAccountServiceTest {
     @Autowired
     private BankAccountService bankAccountService;
     @Autowired
     private UserService userService;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private BankAccountMapper bankAccountMapper;
     private static UUID uuidGeneral = null;
 
     @Test
@@ -48,8 +49,8 @@ class BankAccountServiceTest {
     void shouldToggleBankAccountActive(){
         UUID uuid = getBankAccountUuid();
         bankAccountService.toggleBankAccount(uuid);
-        BankAccount updatedBankAccount = bankAccountService.retrieveBankAccountEntity(uuid);
-        assertThat(updatedBankAccount.getIsActive()).isEqualTo(false);
+        BankAccountDto updatedBankAccount = bankAccountService.findBankAccountById(uuid);
+        assertThat(updatedBankAccount.isActive()).isEqualTo(false);
     }
 
     @Test
@@ -81,10 +82,10 @@ class BankAccountServiceTest {
                     .groupId(1L)
                     .build()
             );
-            User user = userService.findUserByUsername("juninhocbb");
+            UserDto user = userService.findUserByUsername("juninhocbb");
             BankAccountDto bankAccountDto = BankAccountDto
                     .builder()
-                    .userDto(userMapper.userToUserDto(user))
+                    .userDto(user)
                     .accountNumber(123143L)
                     .name("Sicob 123")
                     .build();

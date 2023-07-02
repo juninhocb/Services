@@ -53,7 +53,6 @@ public class BankAccountResource {
                               @RequestParam(name = "amount") BigDecimal amount){
         bankAccountService.depositAmount(id, amount);
     }
-
     @PutMapping("/withdraw/{bankId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void withdrawAmount(@PathVariable(name = "bankId") UUID id,

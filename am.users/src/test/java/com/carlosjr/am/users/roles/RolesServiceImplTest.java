@@ -1,9 +1,6 @@
 package com.carlosjr.am.users.roles;
 
-import com.carlosjr.am.users.user.User;
-import com.carlosjr.am.users.user.UserDto;
-import com.carlosjr.am.users.user.UserMapper;
-import com.carlosjr.am.users.user.UserService;
+import com.carlosjr.am.users.user.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
-class RolesServiceTest {
+class rolesServiceTest {
     @Autowired
     private UserService userService;
     @Autowired

@@ -1,9 +1,6 @@
 package com.carlosjr.am.users.bank;
 
-import com.carlosjr.am.users.user.User;
-import com.carlosjr.am.users.user.UserDto;
-import com.carlosjr.am.users.user.UserMapper;
-import com.carlosjr.am.users.user.UserService;
+import com.carlosjr.am.users.user.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,6 +65,24 @@ class BankAccountResourceTest {
 
     @Test
     @DirtiesContext
+    public void shouldGetNotNullFieldsOnFindByIdRequest(){
+        ResponseEntity<Void> createResponse = restTemplate
+                .postForEntity(BASE_URL, bankAccountDto, Void.class);
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        URI uri = createResponse.getHeaders().getLocation();
+        ResponseEntity<BankAccountDto> getResponse = restTemplate
+                .getForEntity(uri, BankAccountDto.class);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(getResponse.getBody().amount()).isNotNull();
+        assertThat(getResponse.getBody().name()).isNotNull();
+        assertThat(getResponse.getBody().isActive()).isNotNull();
+        assertThat(getResponse.getBody().accountNumber()).isNotNull();
+        assertThat(getResponse.getBody().userDto()).isNotNull();
+        assertThat(getResponse.getBody().id()).isNotNull();
+    }
+
+    @Test
+    @DirtiesContext
     public void shouldNotCreateAnInvalidBankAccount(){
         BankAccountDto invalidBankAccountDto = BankAccountDto
                 .builder()
@@ -108,32 +123,32 @@ class BankAccountResourceTest {
     @Test
     @DirtiesContext
     public void shouldToggleActiveBankAccount(){
-        BankAccount mockedAccount = bankAccountService.findAccountByAccountNumber(38423432L);
+        BankAccountDto mockedAccount =  bankAccountService.findAccountByAccountNumber(38423432L);
         ResponseEntity<Void> getToggleResponse = restTemplate
-                .exchange(BASE_URL+"/toggle/"+mockedAccount.getId(),
+                .exchange(BASE_URL+"/toggle/"+mockedAccount.id(),
                         HttpMethod.PUT, null, Void.class);
         assertThat(getToggleResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         ResponseEntity<BankAccountDto> getResponse = restTemplate
-                .getForEntity(BASE_URL+"/"+mockedAccount.getId(), BankAccountDto.class);
+                .getForEntity(BASE_URL+"/"+mockedAccount.id(), BankAccountDto.class);
         assertThat(getResponse.getBody().isActive()).isFalse();
     }
     @Test
     @DirtiesContext
     public void shouldDepositAndWithdrawValues(){
-        BankAccount mockedAccount = bankAccountService.findAccountByAccountNumber(38423432L);
+        BankAccountDto mockedAccount = bankAccountService.findAccountByAccountNumber(38423432L);
         ResponseEntity<Void> getDepositResponse = restTemplate
-                .exchange(BASE_URL+"/deposit/"+mockedAccount.getId()+"?amount=4",
+                .exchange(BASE_URL+"/deposit/"+mockedAccount.id()+"?amount=4",
                         HttpMethod.PUT, null, Void.class);
         assertThat(getDepositResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         ResponseEntity<BankAccountDto> getState1 = restTemplate
-                .getForEntity(BASE_URL+"/"+mockedAccount.getId(), BankAccountDto.class);
+                .getForEntity(BASE_URL+"/"+mockedAccount.id(), BankAccountDto.class);
         assertThat(getState1.getBody().amount()).isNotZero();
         ResponseEntity<Void> getWithdrawResponse = restTemplate
-                .exchange(BASE_URL+"/withdraw/"+mockedAccount.getId()+"?amount=4",
+                .exchange(BASE_URL+"/withdraw/"+mockedAccount.id()+"?amount=4",
                         HttpMethod.PUT, null, Void.class);
         assertThat(getWithdrawResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         ResponseEntity<BankAccountDto> getState2 = restTemplate
-                .getForEntity(BASE_URL+"/"+mockedAccount.getId(), BankAccountDto.class);
+                .getForEntity(BASE_URL+"/"+mockedAccount.id(), BankAccountDto.class);
         assertThat(getState2.getBody().amount()).isZero();
 
     }
