@@ -35,15 +35,10 @@ class BankAccountServiceTest {
 
     @Test
     @DirtiesContext
-    void shouldCreateUpdateAndRetrieveABankAccountById(){
+    void shouldUpdateAndRetrieveABankAccountById(){
         UUID uuid = getBankAccountUuid();
-        BankAccountDto updateBankAccountDto = BankAccountDto
-                .builder()
-                .user(bankAccountService.findBankAccountById(uuid).user())
-                .accountNumber(123143L)
-                .name("Another label to this bank")
-                .build();
-        bankAccountService.updateBankAccount(uuid, updateBankAccountDto);
+        String name = "Another label to this bank";
+        bankAccountService.updateBankAccount(uuid, name);
         BankAccountDto updatedBankAccountDto = bankAccountService.findBankAccountById(uuid);
         assertThat(updatedBankAccountDto.name()).isEqualTo("Another label to this bank");
     }

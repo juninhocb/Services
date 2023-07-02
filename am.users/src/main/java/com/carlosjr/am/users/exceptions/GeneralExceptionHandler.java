@@ -74,4 +74,16 @@ public class GeneralExceptionHandler {
         );
     }
 
+    @ExceptionHandler(SameFieldExceptionHandler.class)
+    public ResponseEntity<ExceptionResponseDto> sameFieldExceptionHandler(SameFieldExceptionHandler ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ExceptionResponseDto
+                        .builder()
+                        .cause(ex.getCause() == null ? null : ex.getCause().toString())
+                        .message(ex.getMessage())
+                        .className(ex.getClass().toString())
+                        .timestamp(new Date().toString())
+                        .build()
+        );
+    }
 }

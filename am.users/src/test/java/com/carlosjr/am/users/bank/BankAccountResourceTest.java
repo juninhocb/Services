@@ -68,6 +68,21 @@ class BankAccountResourceTest {
 
     @Test
     @DirtiesContext
+    public void shouldNotCreateAnInvalidBankAccount(){
+        BankAccountDto invalidBankAccountDto = BankAccountDto
+                .builder()
+                .user(null)
+                .accountNumber(123143L)
+                .name("Sicob 123")
+                .build();
+        ResponseEntity<Void> createResponse = restTemplate
+                .postForEntity(BASE_URL, invalidBankAccountDto, Void.class);
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+
+    @Test
+    @DirtiesContext
     public void shouldUpdateBankAccountName(){
         ResponseEntity<Void> createResponse = restTemplate
                 .postForEntity(BASE_URL, bankAccountDto, Void.class);
@@ -76,6 +91,17 @@ class BankAccountResourceTest {
         ResponseEntity<Void> updateResponse = restTemplate
                 .exchange(fullUrl, HttpMethod.PUT, null, Void.class);
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+    @Test
+    @DirtiesContext
+    public void shouldNotUpdateBankAccountWithSameName(){
+        ResponseEntity<Void> createResponse = restTemplate
+                .postForEntity(BASE_URL, bankAccountDto, Void.class);
+        URI uri = createResponse.getHeaders().getLocation();
+        String fullUrl = String.format("%s?name=%s", uri, "Sicob 123");
+        ResponseEntity<Void> updateResponse = restTemplate
+                .exchange(fullUrl, HttpMethod.PUT, null, Void.class);
+        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     //fixme: get By Dto not entity
@@ -111,6 +137,9 @@ class BankAccountResourceTest {
         assertThat(getState2.getBody().amount()).isZero();
 
     }
+
+
+
 
 
 

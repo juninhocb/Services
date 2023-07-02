@@ -15,6 +15,7 @@ public class BankAccountMapper {
     }
     public BankAccountDto bankAccountDtoFromEntity(BankAccount bankAccount){
         return BankAccountDto.builder()
+                .id(bankAccount.getId())
                 .name(bankAccount.getName())
                 .accountNumber(bankAccount.getAccountNumber())
                 .user(bankAccount.getUser())

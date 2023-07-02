@@ -1,5 +1,6 @@
 package com.carlosjr.am.users.bank;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class BankAccountResource {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody BankAccountDto bankAccountDto,
+    public ResponseEntity<Void> create(@Valid @RequestBody BankAccountDto bankAccountDto,
                                        UriComponentsBuilder ucb){
         UUID uuid =  bankAccountService.createNewBankAccount(bankAccountDto);
         URI resourceLocation = ucb
@@ -37,7 +38,7 @@ public class BankAccountResource {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateBankAccount(@PathVariable(name = "bankId") UUID id,
                                   @RequestParam(name = "name") String name){
-        bankAccountService.updateBankAccount(id, BankAccountDto.builder().name(name).build());
+        bankAccountService.updateBankAccount(id, name);
     }
 
     @PutMapping("/toggle/{bankId}")

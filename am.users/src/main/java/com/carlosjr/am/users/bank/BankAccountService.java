@@ -28,15 +28,14 @@ public class BankAccountService {
         Optional<BankAccount> bankAccount = bankAccountRepository.findById(id);
         return bankAccountMapper.bankAccountDtoFromEntity(bankAccount.orElseThrow(() -> new ResourceNotFoundException(String.format("Resource with id = %s was not found in database", id))));
     }
-    public void updateBankAccount(UUID id, BankAccountDto bankAccountDto){
+    public void updateBankAccount(UUID id, String name){
         BankAccount oldBankAccount = retrieveBankAccountEntity(id);
-        if (oldBankAccount.getName().equals(bankAccountDto.name())){
+        if (oldBankAccount.getName().equals(name)){
             throw new SameFieldExceptionHandler("The name is the same as the older name.");
         }
-        oldBankAccount.setName(bankAccountDto.name());
+        oldBankAccount.setName(name);
         bankAccountRepository.save(oldBankAccount);
     }
-
     public void toggleBankAccount(UUID id){
         BankAccount oldBankAccount = retrieveBankAccountEntity(id);
         if (oldBankAccount.getIsActive()){
@@ -60,7 +59,6 @@ public class BankAccountService {
         bankAccountRepository.save(bankAccount);
     }
 
-    //fixme
     public BankAccount retrieveBankAccountEntity(UUID id){
         return bankAccountRepository
                 .findById(id)
