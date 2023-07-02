@@ -44,7 +44,7 @@ class BankAccountResourceTest {
 
         bankAccountDto = BankAccountDto
                 .builder()
-                .user(user)
+                .userDto(userMapper.userToUserDto(user))
                 .accountNumber(123143L)
                 .name("Sicob 123")
                 .build();
@@ -71,7 +71,7 @@ class BankAccountResourceTest {
     public void shouldNotCreateAnInvalidBankAccount(){
         BankAccountDto invalidBankAccountDto = BankAccountDto
                 .builder()
-                .user(null)
+                .userDto(null)
                 .accountNumber(123143L)
                 .name("Sicob 123")
                 .build();

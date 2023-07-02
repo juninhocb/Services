@@ -84,7 +84,7 @@ class BankAccountServiceTest {
             User user = userService.findUserByUsername("juninhocbb");
             BankAccountDto bankAccountDto = BankAccountDto
                     .builder()
-                    .user(user)
+                    .userDto(userMapper.userToUserDto(user))
                     .accountNumber(123143L)
                     .name("Sicob 123")
                     .build();

@@ -5,6 +5,7 @@ import com.carlosjr.am.users.bank.BankAccountService;
 import com.carlosjr.am.users.roles.Roles;
 import com.carlosjr.am.users.roles.RolesService;
 import com.carlosjr.am.users.user.User;
+import com.carlosjr.am.users.user.UserMapper;
 import com.carlosjr.am.users.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -20,6 +21,7 @@ public class MockData implements CommandLineRunner {
     private final UserRepository userRepository;
     private final BankAccountService bankAccountService;
     private final RolesService rolesService;
+    private final UserMapper userMapper;
     @Override
     public void run(String... args) throws Exception {
         loadRoles();
@@ -75,17 +77,17 @@ public class MockData implements CommandLineRunner {
             BankAccountDto bankAccount1 = BankAccountDto.builder()
                     .accountNumber(38423432L)
                     .name("Bradesco 123")
-                    .user(userRepository.getUserByUsername("jongreen"))
+                    .userDto(userMapper.userToUserDto(userRepository.getUserByUsername("jongreen")))
                     .build();
             BankAccountDto bankAccount2 = BankAccountDto.builder()
                     .accountNumber(38423433L)
                     .name("BB 123")
-                    .user(userRepository.getUserByUsername("jongreen"))
+                    .userDto(userMapper.userToUserDto(userRepository.getUserByUsername("jongreen")))
                     .build();
             BankAccountDto bankAccount3 = BankAccountDto.builder()
                     .accountNumber(38423434L)
                     .name("Sicredi 123")
-                    .user(userRepository.getUserByUsername("jongreen"))
+                    .userDto(userMapper.userToUserDto(userRepository.getUserByUsername("jongreen")))
                     .build();
 
             bankAccountService.createNewBankAccount(bankAccount1);

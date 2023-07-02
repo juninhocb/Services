@@ -1,6 +1,6 @@
 package com.carlosjr.am.users.bank;
 
-import com.carlosjr.am.users.user.User;
+import com.carlosjr.am.users.user.UserDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -23,5 +23,5 @@ public record BankAccountDto(
         Boolean isActive,
         BigDecimal amount,
         @NotNull
-        User user) {
+        UserDto userDto) {
 }
