@@ -2,6 +2,7 @@ package com.carlosjr.am.users.user;
 
 import com.carlosjr.am.users.bank.BankAccount;
 import com.carlosjr.am.users.roles.Roles;
+import com.carlosjr.am.users.transaction.Transaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,6 +42,11 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private Set<BankAccount> bankAccounts;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private Set<Transaction> transactions;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
