@@ -2,11 +2,13 @@ package com.carlosjr.am.users.user;
 
 import com.carlosjr.am.users.bank.BankAccount;
 import com.carlosjr.am.users.roles.Roles;
-import com.carlosjr.am.users.transaction.Transaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.io.Serial;
@@ -42,10 +44,6 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private Set<BankAccount> bankAccounts;
-
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private Set<Transaction> transactions;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

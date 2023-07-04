@@ -2,7 +2,6 @@ package com.carlosjr.am.users.transaction;
 
 
 import com.carlosjr.am.users.bank.BankAccountDto;
-import com.carlosjr.am.users.user.UserDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -17,13 +16,12 @@ public record TransactionDto(
         @Null
         UUID id,
         @NotNull
-        UserDto userDto,
-        @NotNull
         BankAccountDto bankAccountDto,
         @NotNull
         BigDecimal amount,
         @NotNull
-        TransactionState state,
+        @JsonProperty("invoice_id")
+        UUID invoiceId,
         @Null
         @JsonProperty("created_time")
         LocalDateTime createdTime

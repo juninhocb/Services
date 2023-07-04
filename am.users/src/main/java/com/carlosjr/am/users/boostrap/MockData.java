@@ -6,8 +6,9 @@ import com.carlosjr.am.users.roles.Roles;
 import com.carlosjr.am.users.roles.RolesService;
 import com.carlosjr.am.users.transaction.TransactionDto;
 import com.carlosjr.am.users.transaction.TransactionService;
-import com.carlosjr.am.users.transaction.TransactionState;
-import com.carlosjr.am.users.user.*;
+import com.carlosjr.am.users.user.UserDto;
+import com.carlosjr.am.users.user.UserMapper;
+import com.carlosjr.am.users.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.UUID;
 
 @Profile("test")
 @Component
@@ -30,7 +32,7 @@ public class MockData implements CommandLineRunner {
         loadRoles();
         loadUsers();
         loadBankAccounts();
-        loadTransactions();
+        //loadTransactions();
     }
     private void loadRoles(){
         if(rolesService.getRepositoryCount() == 0){
@@ -108,23 +110,20 @@ public class MockData implements CommandLineRunner {
             UserDto userDto = userService.findUserByUsername("jongreen");
 
             TransactionDto t1 = TransactionDto.builder()
-                    .state(TransactionState.RELEASED)
+                    .invoiceId(UUID.randomUUID())
                     .bankAccountDto(bankAccountDto)
-                    .userDto(userDto)
                     .amount(new BigDecimal(3))
                     .build();
 
             TransactionDto t2 = TransactionDto.builder()
-                    .state(TransactionState.RELEASED)
+                    .invoiceId(UUID.randomUUID())
                     .bankAccountDto(bankAccountDto)
-                    .userDto(userDto)
                     .amount(new BigDecimal(6))
                     .build();
 
             TransactionDto t3 = TransactionDto.builder()
-                    .state(TransactionState.RELEASED)
+                    .invoiceId(UUID.randomUUID())
                     .bankAccountDto(bankAccountDto)
-                    .userDto(userDto)
                     .amount(new BigDecimal(4))
                     .build();
 

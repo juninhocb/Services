@@ -1,7 +1,6 @@
 package com.carlosjr.am.users.transaction;
 
 import com.carlosjr.am.users.bank.BankAccount;
-import com.carlosjr.am.users.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,16 +28,13 @@ public class Transaction {
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(length = 36, columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private UUID id;
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", columnDefinition = "VARCHAR(36)")
-    private User user;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "bank_id", referencedColumnName = "id", columnDefinition = "VARCHAR(36)")
     private BankAccount bankAccount;
     @Column(nullable = false)
     private BigDecimal amount;
-    @Enumerated(value = EnumType.STRING)
-    private TransactionState state;
+    @Column(name = "invoice_id", unique = true)
+    private UUID invoiceId;
     @CreationTimestamp
     @Column(name = "created_time", nullable = false, updatable = false)
     private Timestamp createdTime;

@@ -15,19 +15,17 @@ public class TransactionMapper {
         return TransactionDto.builder()
                 .id(transaction.getId())
                 .bankAccountDto(bankAccountMapper.bankAccountDtoFromEntity(transaction.getBankAccount()))
-                .state(transaction.getState())
+                .invoiceId(transaction.getInvoiceId())
                 .createdTime(transaction.getCreatedTime().toLocalDateTime())
                 .amount(transaction.getAmount())
-                .userDto(userMapper.userToUserDto(transaction.getUser()))
                 .build();
     }
 
     public Transaction fromDtoToEntity(TransactionDto transactionDto){
         return Transaction.builder()
                 .bankAccount(bankAccountMapper.bankAccountFromDto(transactionDto.bankAccountDto()))
-                .user(userMapper.userDtoToUser(transactionDto.userDto()))
                 .amount(transactionDto.amount())
-                .state(transactionDto.state())
+                .invoiceId(transactionDto.invoiceId())
                 .build();
     }
 
