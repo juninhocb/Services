@@ -12,4 +12,5 @@ public interface BankAccountService {
     void withdrawAmount(UUID id, BigDecimal amount);
     long getRepositorySize();
     BankAccountDto findAccountByAccountNumber(Long accountNumber);
+    BankAccount findPersistedByAccountNumber(Long accountNumber);
 }

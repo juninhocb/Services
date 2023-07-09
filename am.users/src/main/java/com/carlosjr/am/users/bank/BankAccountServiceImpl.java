@@ -70,6 +70,12 @@ public class BankAccountServiceImpl implements BankAccountService {
                 .bankAccountDtoFromEntity(bankAccountRepository
                 .findByAccountNumber(accountNumber));
     }
+
+    @Override
+    public BankAccount findPersistedByAccountNumber(Long accountNumber) {
+        return bankAccountRepository.findByAccountNumber(accountNumber);
+    }
+
     protected BankAccount retrieveBankAccountEntity(UUID id){
         return bankAccountRepository
                 .findById(id)

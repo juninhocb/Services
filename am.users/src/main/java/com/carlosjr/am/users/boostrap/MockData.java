@@ -32,7 +32,7 @@ public class MockData implements CommandLineRunner {
         loadRoles();
         loadUsers();
         loadBankAccounts();
-        //loadTransactions();
+        loadTransactions();
     }
     private void loadRoles(){
         if(rolesService.getRepositoryCount() == 0){

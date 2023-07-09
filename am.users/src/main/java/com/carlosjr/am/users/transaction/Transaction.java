@@ -8,8 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.hibernate.type.descriptor.jdbc.CharJdbcType;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -28,12 +30,13 @@ public class Transaction {
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(length = 36, columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private UUID id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "bank_id", referencedColumnName = "id", columnDefinition = "VARCHAR(36)")
     private BankAccount bankAccount;
     @Column(nullable = false)
     private BigDecimal amount;
-    @Column(name = "invoice_id", unique = true)
+    @JdbcType(CharJdbcType.class)
+    @Column(name = "invoice_id", unique = true, columnDefinition = "VARCHAR(36)")
     private UUID invoiceId;
     @CreationTimestamp
     @Column(name = "created_time", nullable = false, updatable = false)

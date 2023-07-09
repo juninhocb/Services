@@ -8,9 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.math.BigDecimal;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,11 +43,33 @@ class TransactionServiceImplTest {
 
     @Test
     @DirtiesContext
-    public void createNewTransaction(){
+    public void createNewTransactionAndFindByIdAndInvoiceId(){
         long repositoryCount = transactionService.getRepositorySize();
         UUID uuidResponse = transactionService.createNewTransaction(transactionDto);
         assertThat(uuidResponse).isNotNull();
         assertThat(transactionService.getRepositorySize()).isEqualTo(repositoryCount+1);
+        TransactionDto transactionDtoFromDataBase = transactionService
+                .findTransactionById(uuidResponse);
+        assertThat(transactionDtoFromDataBase).isNotNull();
+        TransactionDto transactionDtoFromDataBase2 = transactionService
+                .findTransactionByInvoiceId(transactionDtoFromDataBase.invoiceId());
+        assertThat(transactionDtoFromDataBase2).isNotNull();
     }
+
+    @Test
+    @DirtiesContext
+    public void createNewTransactionAndRetrieveTransactionsByBankAccount(){
+        UUID uuidResponse = transactionService.createNewTransaction(transactionDto);
+        assertThat(uuidResponse).isNotNull();
+        Set<TransactionDto> transactionDtos = transactionService
+                .retrieveTransactionsByBankAccount(bankAccountDto,
+                                                    PageRequest.of(0,5));
+        assertThat(transactionDtos).hasSizeGreaterThan(0);
+
+
+    }
+
+
+
 
 }
