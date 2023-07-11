@@ -2,6 +2,9 @@ package com.carlosjr.am.users.bank;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -58,6 +62,21 @@ public class BankAccountResource {
     public void withdrawAmount(@PathVariable(name = "bankId") UUID id,
                               @RequestParam(name = "amount") BigDecimal amount){
         bankAccountService.withdrawAmount(id, amount);
+    }
+
+    @GetMapping("/findbyemail/{email}")
+    public ResponseEntity<Set<BankAccountDto>> getBankAccountsByUser(
+            @PathVariable(name = "email") String userEmail,
+            Pageable pageable){
+
+        Set<BankAccountDto> banks = bankAccountService
+                .retrieveBankAccountsByUser(userEmail,
+                        PageRequest.of(
+                                pageable.getPageNumber(),
+                                pageable.getPageSize(),
+                                pageable.getSortOr(Sort.by(Sort.Direction.ASC, "createdTime"))));
+
+        return ResponseEntity.ok().body(banks);
     }
 
 }

@@ -1,18 +1,23 @@
 package com.carlosjr.am.users.bank;
 
-import com.carlosjr.am.users.user.*;
+import com.carlosjr.am.users.user.User;
+import com.carlosjr.am.users.user.UserDto;
+import com.carlosjr.am.users.user.UserMapper;
+import com.carlosjr.am.users.user.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.URI;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -153,9 +158,22 @@ class BankAccountResourceTest {
 
     }
 
+    @Test
+    void shouldRetrieveBankAccountsByUser() {
+
+        String url = BASE_URL + "/findbyemail/jongreen@example.com?page=0&size=3";
+
+        ResponseEntity<Set<BankAccountDto>> response = restTemplate
+                .exchange(url,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<>() {});
+
+        System.out.println(response.getBody());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 
 
-
-
+    }
 }

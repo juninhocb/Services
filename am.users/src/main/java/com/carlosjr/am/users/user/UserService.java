@@ -9,6 +9,7 @@ public interface UserService {
     void deleteUser(UUID id);
     void updateRoles(UUID id, Boolean isAdmin);
     UserDto findUserByUsername(String username);
+    User findPersistedUserByEmail(String email);
 
 
 }

@@ -2,19 +2,28 @@ package com.carlosjr.am.users.bank;
 
 import com.carlosjr.am.users.exceptions.ResourceNotFoundException;
 import com.carlosjr.am.users.exceptions.SameFieldExceptionHandler;
+import com.carlosjr.am.users.user.User;
+import com.carlosjr.am.users.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 @Primary
 @RequiredArgsConstructor
 public class BankAccountServiceImpl implements BankAccountService {
     private final BankAccountMapper bankAccountMapper;
     private final BankAccountRepository bankAccountRepository;
+    private final UserService userService;
+
     @Override
     public UUID createNewBankAccount(BankAccountDto bankAccountDto){
         BankAccount bankAccount = bankAccountMapper.bankAccountFromDto(bankAccountDto);
@@ -74,6 +83,23 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public BankAccount findPersistedByAccountNumber(Long accountNumber) {
         return bankAccountRepository.findByAccountNumber(accountNumber);
+    }
+
+    @Override
+    public Set<BankAccountDto> retrieveBankAccountsByUser(String email, PageRequest pageRequest) {
+
+        User persistedUser = userService
+                .findPersistedUserByEmail(email);
+
+        List<BankAccount> listOfBanks = bankAccountRepository
+                .findAccountsByUser(persistedUser, pageRequest);
+
+        Set<BankAccountDto> setOfBanksDto = listOfBanks
+                .stream()
+                .map(bankAccountMapper::bankAccountDtoFromEntity)
+                .collect(Collectors.toSet());
+
+        return setOfBanksDto;
     }
 
     protected BankAccount retrieveBankAccountEntity(UUID id){

@@ -4,6 +4,7 @@ import com.carlosjr.am.users.exceptions.ResourceNotFoundException;
 import com.carlosjr.am.users.roles.RolesServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RolesServiceImpl rolesServiceImpl;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapper userMapper;
     @Override
     public UserDto findUserById(UUID id){
@@ -28,6 +30,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UUID createNewUser(UserDto userDto){
         User user = userMapper.userDtoToUser(userDto);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setRoles(rolesServiceImpl.findBasicRoles());
         user.setActive(true);
         User userSaved = userRepository.save(user);
@@ -54,7 +57,29 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public UserDto findUserByUsername(String username){
-        return userMapper.userToUserDto(userRepository.getUserByUsername(username));
+
+        Optional<User> userOpt = userRepository
+                .getUserByUsername(username);
+
+        if(userOpt.isEmpty()){
+            throw new ResourceNotFoundException("Resource with username " + username
+                    + " was not found.");
+        }
+
+        return userMapper.userToUserDto(userOpt.get());
+    }
+    @Override
+    public User findPersistedUserByEmail(String email) {
+
+        Optional<User> persistedUserOpt = userRepository
+                .getUserByEmail(email);
+
+        if (persistedUserOpt.isEmpty()){
+            throw new ResourceNotFoundException("The the expected resource " +
+                    "with email " + email + " was not found.");
+        }
+
+        return persistedUserOpt.get();
     }
 
 }

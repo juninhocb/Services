@@ -3,8 +3,10 @@ package com.carlosjr.am.users.user;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-    User getUserByUsername(String username);
+    Optional<User> getUserByUsername(String username);
+    Optional<User> getUserByEmail(String email);
 }
