@@ -10,6 +10,8 @@ public interface UserService {
     void updateRoles(UUID id, Boolean isAdmin);
     UserDto findUserByUsername(String username);
     User findPersistedUserByEmail(String email);
+    UserTokenDto userSignIn(String username);
+    boolean validateUserAccessToken(String username, String accessToken);
 
 
 }

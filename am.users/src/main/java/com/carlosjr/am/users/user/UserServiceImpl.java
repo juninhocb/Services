@@ -3,6 +3,7 @@ package com.carlosjr.am.users.user;
 import com.carlosjr.am.users.exceptions.ResourceNotFoundException;
 import com.carlosjr.am.users.roles.RolesServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Primary
 public class UserServiceImpl implements UserService {
+
+    @Value("${com.carlosjr.config.access-token-expiration}")
+    private Integer accessTokenExpiresIn;
+
     private final UserRepository userRepository;
     private final RolesServiceImpl rolesServiceImpl;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -80,6 +85,48 @@ public class UserServiceImpl implements UserService {
         }
 
         return persistedUserOpt.get();
+    }
+
+    @Override
+    public UserTokenDto userSignIn(String username) {
+
+        Optional<User> userOpt = userRepository
+                .getUserByUsername(username);
+
+        if (userOpt.isEmpty()){
+            throw new ResourceNotFoundException("Resource with username " + username
+                    + " was not found.");
+        }
+
+        User refreshUser = userOpt.get();
+
+        String temporaryToken = UUID.randomUUID().toString();
+
+        refreshUser.setCurrentAccessToken(temporaryToken);
+
+        userRepository.save(refreshUser);
+
+        return UserTokenDto.builder()
+                .accessToken(temporaryToken)
+                .expiresIn(accessTokenExpiresIn)
+                .build();
+    }
+
+    @Override
+    public boolean validateUserAccessToken(String username, String accessToken) {
+
+        Optional<User> userOpt = userRepository
+                .getUserByUsername(username);
+
+        if (userOpt.isEmpty()){
+            throw new ResourceNotFoundException("Resource with username " + username
+                    + " was not found.");
+        }
+
+        if (userOpt.get().getCurrentAccessToken().equals(accessToken)) {
+            return true;
+        }
+        return false;
     }
 
 }

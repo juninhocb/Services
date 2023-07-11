@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -46,5 +47,27 @@ public class UserResource {
                                 @RequestParam(name = "isAdmin") Boolean isAdmin){
         userService.updateRoles(id, isAdmin);
     }
+
+    @GetMapping("/signin")
+    public ResponseEntity<UserTokenDto> signIn(Principal principal){
+
+        UserTokenDto userTokenDto = userService
+                .userSignIn(principal.getName());
+
+        return ResponseEntity.ok().body(userTokenDto);
+    }
+
+    @GetMapping("/validate/{token}")
+    public ResponseEntity<Boolean> validateAnUserWithAccessToken(
+            @PathVariable(value = "token") String accessToken,
+            Principal principal){
+
+        boolean isValidated = userService
+                .validateUserAccessToken(principal.getName(),
+                        accessToken);
+
+        return new ResponseEntity<>(isValidated, HttpStatus.OK);
+    }
+
 
 }
