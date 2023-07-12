@@ -7,6 +7,8 @@ import lombok.Builder;
 public record UserTokenDto(
         @JsonProperty("access_token")
         String accessToken,
+        @JsonProperty("refresh_token")
+        String refreshToken,
         @JsonProperty("expires_in")
-        Integer expiresIn) {
+        Long expiresIn) {
 }

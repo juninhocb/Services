@@ -8,9 +8,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +17,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     @Value("${com.carlosjr.config.access-token-expiration}")
-    private Integer accessTokenExpiresIn;
-
+    private Long accessTokenExpiresIn;
     private final UserRepository userRepository;
     private final RolesServiceImpl rolesServiceImpl;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -98,22 +96,33 @@ public class UserServiceImpl implements UserService {
                     + " was not found.");
         }
 
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
         User refreshUser = userOpt.get();
 
-        String temporaryToken = UUID.randomUUID().toString();
+        String temporaryAccessToken = UUID.randomUUID().toString();
+        String temporaryRefreshToken = UUID.randomUUID().toString();
 
-        refreshUser.setCurrentAccessToken(temporaryToken);
+        refreshUser.setCurrentAccessToken(temporaryAccessToken);
+        refreshUser.setCurrentRefreshToken(temporaryRefreshToken);
+        refreshUser.setCreatedAccessToken(currentDateTime);
+        refreshUser.setCreatedRefreshToken(currentDateTime);
 
         userRepository.save(refreshUser);
 
         return UserTokenDto.builder()
-                .accessToken(temporaryToken)
+                .accessToken(temporaryAccessToken)
+                .refreshToken(temporaryRefreshToken)
                 .expiresIn(accessTokenExpiresIn)
                 .build();
     }
 
     @Override
     public boolean validateUserAccessToken(String username, String accessToken) {
+
+        if (accessToken.equals("")){
+            return false;
+        }
 
         Optional<User> userOpt = userRepository
                 .getUserByUsername(username);
@@ -123,10 +132,15 @@ public class UserServiceImpl implements UserService {
                     + " was not found.");
         }
 
-        if (userOpt.get().getCurrentAccessToken().equals(accessToken)) {
-            return true;
-        }
-        return false;
+        return userOpt.get().getCurrentAccessToken() != null;
+    }
+
+    @Override
+    public Set<User> getLoggedUsers() {
+        return new HashSet<>(userRepository.listOfLoggedUsers());
+    }
+    public void updateUserDirectly(User user){
+        userRepository.save(user);
     }
 
 }

@@ -14,6 +14,7 @@ import org.hibernate.type.SqlTypes;
 import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -58,6 +59,14 @@ public class User implements Serializable {
     @UpdateTimestamp
     @Column(name = "updated_date")
     private Timestamp updatedDate;
+
+    @Column(name = "current_access_token", columnDefinition = "VARCHAR(36)")
     private String currentAccessToken;
+    @Column(name = "current_refresh_token", columnDefinition = "VARCHAR(36)")
+    private String currentRefreshToken;
+    @Column(name = "created_access_token")
+    private LocalDateTime createdAccessToken;
+    @Column(name = "created_refresh_token")
+    private LocalDateTime createdRefreshToken;
 
 }
