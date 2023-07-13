@@ -11,7 +11,7 @@ public interface BankAccountService {
     BankAccountDto findBankAccountById(UUID id);
     void updateBankAccount(UUID id, String name);
     void toggleBankAccount(UUID id);
-    void depositAmount(UUID id, BigDecimal amount);
+    void depositAmount(UUID invoiceId, UUID bankId, BigDecimal amount);
     void withdrawAmount(UUID id, BigDecimal amount);
     long getRepositorySize();
     BankAccountDto findAccountByAccountNumber(Long accountNumber);

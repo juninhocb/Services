@@ -24,6 +24,9 @@ public class TransactionServiceImpl implements TransactionService {
     private final BankAccountService bankAccountService;
     @Override
     public UUID createNewTransaction(TransactionDto transactionDto) {
+        if (transactionDto == null){
+            throw new RuntimeException();
+        }
         Transaction transaction = transactionRepository
                 .save(transactionMapper.fromDtoToEntity(transactionDto));
         return transaction.getId();

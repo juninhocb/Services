@@ -1,5 +1,7 @@
 package com.carlosjr.am.users.bank;
 
+import com.carlosjr.am.users.transaction.TransactionService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BankAccountResource {
     private final BankAccountService bankAccountService;
+    private final TransactionService transactionService;
 
     @GetMapping("/{bankId}")
     public ResponseEntity<BankAccountDto> findBankAccountById(
@@ -53,9 +56,13 @@ public class BankAccountResource {
 
     @PutMapping("/deposit/{bankId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public void depositAmount(@PathVariable(name = "bankId") UUID id,
                               @RequestParam(name = "amount") BigDecimal amount){
-        bankAccountService.depositAmount(id, amount);
+        bankAccountService.depositAmount(UUID.randomUUID(), id, amount);
+        transactionService.createNewTransaction(null);
+
+
     }
     @PutMapping("/withdraw/{bankId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
