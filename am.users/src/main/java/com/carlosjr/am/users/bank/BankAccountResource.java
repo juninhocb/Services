@@ -1,6 +1,10 @@
 package com.carlosjr.am.users.bank;
 
+import com.carlosjr.am.users.common.InvoiceDto;
+import com.carlosjr.am.users.exceptions.AccessTokenExpirationException;
+import com.carlosjr.am.users.transaction.TransactionDto;
 import com.carlosjr.am.users.transaction.TransactionService;
+import com.carlosjr.am.users.user.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.math.BigDecimal;
 import java.net.URI;
+import java.security.Principal;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,6 +27,7 @@ import java.util.UUID;
 public class BankAccountResource {
     private final BankAccountService bankAccountService;
     private final TransactionService transactionService;
+    private final UserService userService;
 
     @GetMapping("/{bankId}")
     public ResponseEntity<BankAccountDto> findBankAccountById(
@@ -54,21 +59,43 @@ public class BankAccountResource {
         bankAccountService.toggleBankAccount(id);
     }
 
-    @PutMapping("/deposit/{bankId}")
+    @PostMapping("/deposit")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void depositAmount(@PathVariable(name = "bankId") UUID id,
-                              @RequestParam(name = "amount") BigDecimal amount){
-        bankAccountService.depositAmount(UUID.randomUUID(), id, amount);
-        transactionService.createNewTransaction(null);
+    public void depositAmount(@RequestBody InvoiceDto invoiceDto,
+                              Principal principal){
 
-
+        if (userService.validateUserLoggedIn(principal.getName())){
+            BankAccountDto bankAccountDto = bankAccountService.
+                    depositAmount(invoiceDto.accountNumber(),
+                            invoiceDto.amount());
+            transactionService.createNewTransaction(TransactionDto.builder()
+                    .invoiceId(invoiceDto.invoiceId())
+                    .amount(invoiceDto.amount())
+                    .bankAccountDto(bankAccountDto)
+                    .build());
+        } else {
+            throw new AccessTokenExpirationException("Not logged in.");
+        }
     }
-    @PutMapping("/withdraw/{bankId}")
+    @PostMapping("/withdraw")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void withdrawAmount(@PathVariable(name = "bankId") UUID id,
-                              @RequestParam(name = "amount") BigDecimal amount){
-        bankAccountService.withdrawAmount(id, amount);
+    @Transactional
+    public void withdrawAmount(@RequestBody InvoiceDto invoiceDto,
+                               Principal principal){
+
+        if (userService.validateUserLoggedIn(principal.getName())){
+            BankAccountDto bankAccountDto = bankAccountService.
+                    withdrawAmount(invoiceDto.accountNumber(),
+                            invoiceDto.amount());
+            transactionService.createNewTransaction(TransactionDto.builder()
+                    .invoiceId(invoiceDto.invoiceId())
+                    .amount(invoiceDto.amount())
+                    .bankAccountDto(bankAccountDto)
+                    .build());
+        } else {
+            throw new AccessTokenExpirationException("Not logged in.");
+        }
     }
 
     @GetMapping("/findbyemail/{email}")

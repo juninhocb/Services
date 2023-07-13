@@ -61,18 +61,20 @@ public class BankAccountServiceImpl implements BankAccountService {
         bankAccountRepository.save(oldBankAccount);
     }
     @Override
-    public void depositAmount(UUID invoiceId, UUID bankId, BigDecimal amount){
-        BankAccount bankAccount = retrieveBankAccountEntity(bankId);
+    public BankAccountDto depositAmount(Long bankAccountNumber, BigDecimal amount){
+        BankAccount bankAccount = findPersistedByAccountNumber(bankAccountNumber);
         BigDecimal currentAmount = bankAccount.getAmount();
         bankAccount.setAmount(currentAmount.add(amount));
-        bankAccountRepository.save(bankAccount);
+        BankAccount bankAccountSaved = bankAccountRepository.save(bankAccount);
+        return bankAccountMapper.bankAccountDtoFromEntity(bankAccountSaved);
     }
     @Override
-    public void withdrawAmount(UUID id, BigDecimal amount){
-        BankAccount bankAccount = retrieveBankAccountEntity(id);
+    public BankAccountDto withdrawAmount(Long bankAccountNumber, BigDecimal amount){
+        BankAccount bankAccount = findPersistedByAccountNumber(bankAccountNumber);
         BigDecimal currentAmount = bankAccount.getAmount();
         bankAccount.setAmount(currentAmount.subtract(amount));
-        bankAccountRepository.save(bankAccount);
+        BankAccount bankAccountSaved = bankAccountRepository.save(bankAccount);
+        return bankAccountMapper.bankAccountDtoFromEntity(bankAccountSaved);
     }
     public BankAccountDto findAccountByAccountNumber(Long accountNumber){
         return bankAccountMapper

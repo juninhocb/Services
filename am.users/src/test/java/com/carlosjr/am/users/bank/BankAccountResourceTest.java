@@ -139,6 +139,7 @@ class BankAccountResourceTest {
     }
     @Test
     @DirtiesContext
+    @Deprecated(since="I refactor deposit resource")
     public void shouldDepositAndWithdrawValues(){
         BankAccountDto mockedAccount = bankAccountService.findAccountByAccountNumber(38423432L);
         ResponseEntity<Void> getDepositResponse = restTemplate

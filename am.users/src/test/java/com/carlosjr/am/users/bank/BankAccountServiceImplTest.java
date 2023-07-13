@@ -57,7 +57,7 @@ class bankAccountServiceTest {
     @DirtiesContext
     void shouldDepositAmount(){
         UUID savedBankAccountDtoId = getBankAccountUuid();
-        bankAccountService.depositAmount(savedBankAccountDtoId, new BigDecimal(4));
+        bankAccountService.depositAmount(38423432L, new BigDecimal(4));
         BankAccountDto updatedBankAccount = bankAccountService.findBankAccountById(savedBankAccountDtoId);
         assertThat(updatedBankAccount.amount()).isGreaterThan(new BigDecimal(0));
     }
@@ -66,7 +66,7 @@ class bankAccountServiceTest {
     @DirtiesContext
     void shouldWithdrawAmount(){
         UUID savedBankAccountDtoId = getBankAccountUuid();
-        bankAccountService.withdrawAmount(savedBankAccountDtoId, new BigDecimal(4));
+        bankAccountService.withdrawAmount(38423432L, new BigDecimal(4));
         BankAccountDto updatedBankAccount = bankAccountService.findBankAccountById(savedBankAccountDtoId);
         assertThat(updatedBankAccount.amount()).isNotZero();
     }

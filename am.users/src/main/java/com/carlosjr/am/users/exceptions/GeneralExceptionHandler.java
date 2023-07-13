@@ -100,5 +100,16 @@ public class GeneralExceptionHandler {
         );
     }
 
-
+    @ExceptionHandler(AccessTokenExpirationException.class)
+    public ResponseEntity<ExceptionResponseDto> notLoggedInHandler(AccessTokenExpirationException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                ExceptionResponseDto
+                        .builder()
+                        .cause(ex.getCause() == null ? null : ex.getCause().toString())
+                        .message(ex.getMessage())
+                        .className(ex.getClass().toString())
+                        .timestamp(new Date().toString())
+                        .build()
+        );
+    }
 }

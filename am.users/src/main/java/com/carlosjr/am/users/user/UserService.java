@@ -15,5 +15,6 @@ public interface UserService {
     boolean validateUserAccessToken(String username, String accessToken);
     Set<User> getLoggedUsers();
     void updateUserDirectly(User user);
+    boolean validateUserLoggedIn(String username);
 
 }

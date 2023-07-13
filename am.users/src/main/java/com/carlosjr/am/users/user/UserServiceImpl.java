@@ -143,4 +143,17 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public boolean validateUserLoggedIn(String username) {
+        //TODO: refactor this to take only user at database if access token is not expired
+        Optional<User> userOptional = userRepository
+                .getUserByUsername(username);
+        if (userOptional.isPresent()){
+            if (userOptional.get().getCurrentAccessToken() != null){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
