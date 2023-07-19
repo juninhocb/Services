@@ -10,6 +10,7 @@ import com.carlosjr.am.users.user.UserDto;
 import com.carlosjr.am.users.user.UserMapper;
 import com.carlosjr.am.users.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Profile("test")
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class MockData implements CommandLineRunner {
     private final UserService userService;
     private final BankAccountService bankAccountService;
@@ -33,6 +35,7 @@ public class MockData implements CommandLineRunner {
         loadUsers();
         loadBankAccounts();
         loadTransactions();
+        log.trace("Load all data successfully!");
     }
     private void loadRoles(){
         if(rolesService.getRepositoryCount() == 0){
