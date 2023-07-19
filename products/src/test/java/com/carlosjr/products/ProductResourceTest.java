@@ -22,7 +22,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProductResourceTest {
+public class
+
+ProductResourceTest {
     @Autowired
     TestRestTemplate restTemplate;
     private ProductDTO product;
