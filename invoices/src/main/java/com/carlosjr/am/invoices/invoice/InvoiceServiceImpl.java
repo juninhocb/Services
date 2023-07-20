@@ -3,11 +3,14 @@ package com.carlosjr.am.invoices.invoice;
 import com.carlosjr.am.invoices.common.InvoiceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +43,17 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public Set<InvoiceDto> getInvoicesByUsername(String username) {
-        return null;
+    public Set<InvoiceDto> getInvoicesByUsername(String username, PageRequest pageRequest) {
+        log.trace("[ invoiceServiceImpl ] Attempt to get list of invoices by username: "
+                + username);
+
+        List<Invoice> invoices =  invoiceRepository
+                .getInvoicesByUsername(username, pageRequest);
+
+         return invoices
+                .stream()
+                .map(invoiceMapper::invoiceEntityToDto)
+                .collect(Collectors.toSet());
     }
 
     @Override

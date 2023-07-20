@@ -35,9 +35,11 @@ public class Invoice {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "invoice_type")
     private InvoiceType invoiceType;
 
     @CreationTimestamp
+    @Column(name = "created_invoice")
     private Timestamp createdInvoice;
 
 }
