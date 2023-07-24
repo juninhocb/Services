@@ -2,19 +2,24 @@ package com.carlosjr.products.schedule;
 
 import com.carlosjr.products.products.Product;
 import com.carlosjr.products.products.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class DailyDeleteJob {
-    @Autowired
-    private ProductService productService;
+
+    private final ProductService productService;
     @Scheduled(cron = "0 0 0 * * *")
     public void deleteDataIfRequired(){
+        log.info("[ DailyDeleteJob ] Starting daily schedule.");
         List<Product> listOfNotAvailableProducts = productService.findAllNotAvailable();
-        listOfNotAvailableProducts.forEach(product -> productService.hardDelete(product));
+        listOfNotAvailableProducts.forEach(productService::hardDelete);
+        log.info("[ DailyDeleteJob ] Delete schedule completed!");
     }
 }

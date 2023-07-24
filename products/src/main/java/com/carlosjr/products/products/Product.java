@@ -1,8 +1,8 @@
 package com.carlosjr.products.products;
 
-import com.carlosjr.products.products.enums.FeedSubProduct;
 import com.carlosjr.products.products.enums.ProductType;
 import com.carlosjr.products.products.enums.UnitType;
+import com.carlosjr.products.subproduct.SubProduct;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,9 +41,9 @@ public class Product implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name="product_type")
     private ProductType productType;
-    @Enumerated(EnumType.STRING)
-    @Column(name="feed_sub_product")
-    private FeedSubProduct FeedSubProduct;
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "id", name = "sub_product")
+    private SubProduct subProduct;
     @Enumerated(EnumType.STRING)
     @Column(name="unit_type")
     private UnitType unitType;

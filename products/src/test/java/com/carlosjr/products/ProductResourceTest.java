@@ -2,7 +2,6 @@ package com.carlosjr.products;
 
 import com.carlosjr.products.products.Product;
 import com.carlosjr.products.products.ProductDTO;
-import com.carlosjr.products.products.enums.FeedSubProduct;
 import com.carlosjr.products.products.enums.ProductType;
 import com.carlosjr.products.products.enums.UnitType;
 import org.apache.tomcat.util.codec.binary.Base64;
