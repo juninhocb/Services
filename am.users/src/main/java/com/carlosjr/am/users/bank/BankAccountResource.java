@@ -1,6 +1,7 @@
 package com.carlosjr.am.users.bank;
 
-import com.carlosjr.am.users.common.InvoiceDto;
+
+import com.carlosjr.am.common.InvoiceDto;
 import com.carlosjr.am.users.exceptions.AccessTokenExpirationException;
 import com.carlosjr.am.users.transaction.TransactionDto;
 import com.carlosjr.am.users.transaction.TransactionService;
