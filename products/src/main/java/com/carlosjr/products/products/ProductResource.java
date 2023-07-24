@@ -1,8 +1,8 @@
 package com.carlosjr.products.products;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,12 +12,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/v1/products")
+@RequiredArgsConstructor
 public class ProductResource {
-    @Autowired
-    ProductService productService;
+
+    private final ProductService productService;
     @GetMapping(value = "/find/{productId}/{groupId}")
     public ResponseEntity<Product> findProductById(@PathVariable(name="productId") Long productId,@PathVariable(name="groupId") Long groupId) {
         Product product = productService.findAvailableProductByIdAndGroup(productId, groupId);
@@ -27,7 +29,7 @@ public class ProductResource {
     public ResponseEntity<Void> createProduct(@RequestBody @Valid ProductDTO productDTO, UriComponentsBuilder ucb){
         Product product = new Product();
         BeanUtils.copyProperties(productDTO, product);
-        long productId = productService.createProduct(product);
+        UUID productId = productService.createProduct(product);
         URI resourcePath = ucb
                 .path("/v1/products/find/{productId}/{groupId}")
                 .buildAndExpand(productId, productDTO.ownerGroup())

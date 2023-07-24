@@ -1,20 +1,23 @@
 package com.carlosjr.products.products;
 
 import com.carlosjr.products.exception.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class ProductService {
-    @Autowired
-    ProductRepository productRepository;
+
+    private final ProductRepository productRepository;
     private boolean isGroupAllowedToThisResource(Long productId, Long groupId){
         Product product = productRepository.findProductByProductIdAndGroupId(productId, groupId);
         return product != null;
@@ -28,10 +31,8 @@ public class ProductService {
     public List<Product> findAllProductsByGroup(Long groupId, PageRequest createdBy){
         return productRepository.findAllByGroup(groupId, createdBy);
     }
-    public long createProduct(Product product){
+    public UUID createProduct(Product product){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String now = formatter.format(LocalDateTime.now());
-        product.setCreationDate(now);
         product.setIsAvailable(true);
         product.setDeletedDate(null);
         Product savedProduct = productRepository.save(product);

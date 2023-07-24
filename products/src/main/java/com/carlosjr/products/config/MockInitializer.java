@@ -10,7 +10,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -24,10 +23,46 @@ public class MockInitializer implements CommandLineRunner {
     public void run(String... args) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String now = formatter.format(LocalDateTime.now());
-        Product product1 = new Product(1L,1L, "Hamburguer", 1.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão", now, true, null);
-        Product product2 = new Product(2L, 2L, "Maça", 5.25, ProductType.ALIMENTOS, FeedSubProduct.FRUTAS_LEGUMES, UnitType.KG, "Komprão", now, true, null);
-        Product product3 = new Product(3L, 1L,  "Leite", 4.25, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.LITRO, "Komprão", now, true, null);
-        Product product4 = new Product(4L, 1L, "Ketchup", 7.80, ProductType.ALIMENTOS, FeedSubProduct.CAFE_PETISCOS, UnitType.UNIDADE, "Komprão", now, false, LocalDate.now().plusDays(45));
+
+        Product product1 = Product.builder()
+                .name("Hamburguer")
+                .value(1.25)
+                .productType(ProductType.ALIMENTOS)
+                .FeedSubProduct(FeedSubProduct.CAFE_PETISCOS)
+                .unitType(UnitType.UNIDADE)
+                .marketPlaceName("Komprão")
+                .isAvailable(true)
+                .ownerGroup(1L).build();
+
+        Product product2 = Product.builder()
+                .name("Maça")
+                .value(5.25)
+                .productType(ProductType.ALIMENTOS)
+                .FeedSubProduct(FeedSubProduct.FRUTAS_LEGUMES)
+                .unitType(UnitType.KG)
+                .marketPlaceName("Komprão")
+                .isAvailable(true)
+                .ownerGroup(1L).build();
+
+        Product product3 = Product.builder()
+                .name("Leite")
+                .value(4.25)
+                .productType(ProductType.ALIMENTOS)
+                .FeedSubProduct(FeedSubProduct.CAFE_PETISCOS)
+                .unitType(UnitType.LITRO)
+                .marketPlaceName("Komprão")
+                .isAvailable(true)
+                .ownerGroup(1L).build();
+
+        Product product4 = Product.builder()
+                .name("Ketchup")
+                .value(7.80)
+                .productType(ProductType.ALIMENTOS)
+                .FeedSubProduct(FeedSubProduct.CAFE_PETISCOS)
+                .unitType(UnitType.UNIDADE)
+                .marketPlaceName("Komprão")
+                .isAvailable(true)
+                .ownerGroup(1L).build();
         productService.mockProducts(Arrays.asList(product1, product2, product3, product4));
     }
 }
