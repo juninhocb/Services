@@ -1,4 +1,4 @@
-package com.carlosjr.am.users.common;
+package com.carlosjr.am.common;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -13,6 +13,8 @@ public record InvoiceDto(
         UUID invoiceId,
         @JsonProperty("account_number")
         Long accountNumber,
+        String invoiceType,
+        String username,
         BigDecimal amount
 
 ) {

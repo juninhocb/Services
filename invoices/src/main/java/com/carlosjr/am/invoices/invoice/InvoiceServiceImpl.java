@@ -1,6 +1,6 @@
 package com.carlosjr.am.invoices.invoice;
 
-import com.carlosjr.am.invoices.common.InvoiceDto;
+import com.carlosjr.am.common.InvoiceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;

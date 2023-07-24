@@ -1,6 +1,6 @@
 package com.carlosjr.am.invoices.invoice;
 
-import com.carlosjr.am.invoices.common.InvoiceDto;
+import com.carlosjr.am.common.InvoiceDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

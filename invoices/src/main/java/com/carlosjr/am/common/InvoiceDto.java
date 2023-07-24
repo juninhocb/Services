@@ -1,4 +1,4 @@
-package com.carlosjr.am.invoices.common;
+package com.carlosjr.am.common;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
