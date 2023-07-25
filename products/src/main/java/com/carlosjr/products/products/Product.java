@@ -1,8 +1,8 @@
 package com.carlosjr.products.products;
 
-import com.carlosjr.products.products.enums.ProductType;
-import com.carlosjr.products.products.enums.UnitType;
+import com.carlosjr.products.producttype.ProductType;
 import com.carlosjr.products.subproduct.SubProduct;
+import com.carlosjr.products.unittype.UnitType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,14 +38,15 @@ public class Product implements Serializable {
     private Long ownerGroup;
     private String name;
     private Double value;
-    @Enumerated(EnumType.STRING)
-    @Column(name="product_type")
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "id", name = "product_type")
     private ProductType productType;
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", name = "sub_product")
     private SubProduct subProduct;
     @Enumerated(EnumType.STRING)
-    @Column(name="unit_type")
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "id", name = "unit_type")
     private UnitType unitType;
     @Column(name="marketplace")
     private String marketPlaceName;

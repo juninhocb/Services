@@ -1,0 +1,29 @@
+package com.carlosjr.products.producttype;
+
+import com.carlosjr.products.products.Product;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Set;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "product_type")
+@Builder
+public class ProductType {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @OneToMany(mappedBy = "productType")
+    private Set<Product> products;
+
+}
