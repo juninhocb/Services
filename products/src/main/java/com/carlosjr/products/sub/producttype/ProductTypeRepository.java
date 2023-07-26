@@ -1,8 +1,11 @@
 package com.carlosjr.products.sub.producttype;
 
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-@Transactional
+import java.util.Optional;
+
 public interface ProductTypeRepository extends JpaRepository<ProductType, Long> {
+
+    Optional<ProductType> findProductTypeByName(String name);
+
 }
