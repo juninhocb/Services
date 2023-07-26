@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductTypeResource {
 
-    private final ProductTypeRepository productTypeRepository;
+    private final com.carlosjr.products.producttype.ProductTypeRepository productTypeRepository;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createProductType(@RequestParam(name = "name") String typeName){

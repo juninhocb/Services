@@ -4,7 +4,6 @@ import com.carlosjr.products.products.Product;
 import com.carlosjr.products.products.ProductDTO;
 import com.carlosjr.products.products.ProductService;
 import com.carlosjr.products.sub.producttype.ProductType;
-import com.carlosjr.products.sub.producttype.ProductTypeRepository;
 import com.carlosjr.products.sub.subproduct.SubProduct;
 import com.carlosjr.products.sub.subproduct.SubProductRepository;
 import com.carlosjr.products.sub.unittype.UnitType;
@@ -38,7 +37,7 @@ ProductResourceTest {
     @Autowired
     UnitTypeRepository unitTypeRepository;
     @Autowired
-    ProductTypeRepository productTypeRepository;
+    com.carlosjr.products.producttype.ProductTypeRepository productTypeRepository;
     @Autowired
     ProductService productService;
     private ProductDTO product;

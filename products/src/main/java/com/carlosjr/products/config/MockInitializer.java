@@ -3,7 +3,6 @@ package com.carlosjr.products.config;
 import com.carlosjr.products.products.Product;
 import com.carlosjr.products.products.ProductService;
 import com.carlosjr.products.sub.producttype.ProductType;
-import com.carlosjr.products.sub.producttype.ProductTypeRepository;
 import com.carlosjr.products.sub.subproduct.SubProduct;
 import com.carlosjr.products.sub.subproduct.SubProductRepository;
 import com.carlosjr.products.sub.unittype.UnitType;
@@ -23,7 +22,7 @@ public class MockInitializer implements CommandLineRunner {
 
     private final ProductService productService;
     private final SubProductRepository subProductRepository;
-    private final ProductTypeRepository productTypeRepository;
+    private final com.carlosjr.products.producttype.ProductTypeRepository productTypeRepository;
     private final UnitTypeRepository unitTypeRepository;
     @Override
     public void run(String... args) {
