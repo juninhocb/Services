@@ -1,4 +1,4 @@
-package com.carlosjr.products.unittype;
+package com.carlosjr.products.sub.unittype;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

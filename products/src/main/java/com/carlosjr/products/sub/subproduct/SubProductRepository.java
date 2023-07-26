@@ -1,4 +1,4 @@
-package com.carlosjr.products.subproduct;
+package com.carlosjr.products.sub.subproduct;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

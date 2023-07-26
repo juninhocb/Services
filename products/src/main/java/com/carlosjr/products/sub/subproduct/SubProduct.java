@@ -1,7 +1,8 @@
-package com.carlosjr.products.subproduct;
+package com.carlosjr.products.sub.subproduct;
 
 
 import com.carlosjr.products.products.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,7 @@ public class SubProduct {
     private String name;
 
     @OneToMany(mappedBy = "subProduct")
+    @JsonIgnore
     private Set<Product> products;
 
 }

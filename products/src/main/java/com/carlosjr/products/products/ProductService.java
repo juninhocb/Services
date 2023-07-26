@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,11 +17,11 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private boolean isGroupAllowedToThisResource(Long productId, Long groupId){
+    private boolean isGroupAllowedToThisResource(UUID productId, Long groupId){
         Product product = productRepository.findProductByProductIdAndGroupId(productId, groupId);
         return product != null;
     }
-    public Product findAvailableProductByIdAndGroup(Long productId, Long groupId){
+    public Product findAvailableProductByIdAndGroup(UUID productId, Long groupId){
         Product product = productRepository.findAvailableByProductIdAndGroupId(productId, groupId);
         if(product == null)
             throw new ResourceNotFoundException("The product with id " + productId + " was not found.");
@@ -31,14 +30,14 @@ public class ProductService {
     public List<Product> findAllProductsByGroup(Long groupId, PageRequest createdBy){
         return productRepository.findAllByGroup(groupId, createdBy);
     }
+
     public UUID createProduct(Product product){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         product.setIsAvailable(true);
         product.setDeletedDate(null);
         Product savedProduct = productRepository.save(product);
         return savedProduct.getId();
     }
-    public void safeDeleteProduct(Long productId, Long groupId) {
+    public void safeDeleteProduct(UUID productId, Long groupId) {
         findAvailableProductByIdAndGroup(productId, groupId);
         LocalDate deletedDate = LocalDate.now();
         productRepository.changeAvailableState(productId, deletedDate, false);
@@ -50,7 +49,7 @@ public class ProductService {
      * @param productId
      * @param groupId
      */
-    public void recoverResource(Long productId, Long groupId){
+    public void recoverResource(UUID productId, Long groupId){
         if (isGroupAllowedToThisResource(productId, groupId))
             productRepository.changeAvailableState(productId, null, true);
         else
@@ -67,4 +66,6 @@ public class ProductService {
     public void mockProducts(List<Product> products){
         productRepository.saveAll(products);
     }
+
+
 }

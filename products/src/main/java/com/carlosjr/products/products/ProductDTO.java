@@ -1,8 +1,8 @@
 package com.carlosjr.products.products;
 
-import com.carlosjr.products.producttype.ProductType;
-import com.carlosjr.products.subproduct.SubProduct;
-import com.carlosjr.products.unittype.UnitType;
+import com.carlosjr.products.sub.producttype.ProductType;
+import com.carlosjr.products.sub.subproduct.SubProduct;
+import com.carlosjr.products.sub.unittype.UnitType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -19,7 +19,7 @@ public record ProductDTO(
         Double value,
         @NotNull
         ProductType productType,
-        SubProduct feedSubProduct,
+        SubProduct subProduct,
         @NotNull
         UnitType unitType,
         @NotBlank

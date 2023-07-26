@@ -2,12 +2,12 @@ package com.carlosjr.products.config;
 
 import com.carlosjr.products.products.Product;
 import com.carlosjr.products.products.ProductService;
-import com.carlosjr.products.producttype.ProductType;
-import com.carlosjr.products.producttype.ProductTypeRepository;
-import com.carlosjr.products.subproduct.SubProduct;
-import com.carlosjr.products.subproduct.SubProductRepository;
-import com.carlosjr.products.unittype.UnitType;
-import com.carlosjr.products.unittype.UnitTypeRepository;
+import com.carlosjr.products.sub.producttype.ProductType;
+import com.carlosjr.products.sub.producttype.ProductTypeRepository;
+import com.carlosjr.products.sub.subproduct.SubProduct;
+import com.carlosjr.products.sub.subproduct.SubProductRepository;
+import com.carlosjr.products.sub.unittype.UnitType;
+import com.carlosjr.products.sub.unittype.UnitTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;

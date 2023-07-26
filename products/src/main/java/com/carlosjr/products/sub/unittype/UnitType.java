@@ -1,6 +1,7 @@
-package com.carlosjr.products.producttype;
+package com.carlosjr.products.sub.unittype;
 
 import com.carlosjr.products.products.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +14,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product_type")
+@Table(name = "unit_type")
 @Builder
-public class ProductType {
+public class UnitType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,8 @@ public class ProductType {
 
     private String name;
 
-    @OneToMany(mappedBy = "productType")
+    @OneToMany(mappedBy = "unitType")
+    @JsonIgnore
     private Set<Product> products;
 
 }
