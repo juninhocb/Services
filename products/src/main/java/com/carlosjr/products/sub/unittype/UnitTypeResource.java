@@ -2,6 +2,8 @@ package com.carlosjr.products.sub.unittype;
 
 import com.carlosjr.products.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,6 +16,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/unit-type")
 @RequiredArgsConstructor
+@Slf4j
 public class UnitTypeResource {
 
     private final UnitTypeRepository unitTypeRepository;
@@ -26,7 +29,10 @@ public class UnitTypeResource {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(cacheNames = "sub-product-cache")
     public List<UnitType> listUnitType(Pageable pageable){
+
+        log.trace(" [ UnitTypeResource ] Attempt to find all unit type");
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "id"));

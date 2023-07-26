@@ -3,6 +3,7 @@ package com.carlosjr.products.products;
 import com.carlosjr.products.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,10 @@ public class ProductService {
             throw new ResourceNotFoundException("The product with id " + productId + " was not found.");
         return product;
     }
-    public List<Product> findAllProductsByGroup(Long groupId, PageRequest createdBy){
-        return productRepository.findAllByGroup(groupId, createdBy);
+    @Cacheable(cacheNames = "product-cache", key = "#groupId")
+    public List<Product> findAllProductsByGroup(Long groupId, PageRequest pageRequest){
+        log.trace("[ ProductService ] Attempt to find products by group");
+        return productRepository.findAllByGroup(groupId, pageRequest);
     }
 
     public UUID createProduct(Product product){

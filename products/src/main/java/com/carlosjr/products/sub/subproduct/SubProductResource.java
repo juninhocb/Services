@@ -2,6 +2,8 @@ package com.carlosjr.products.sub.subproduct;
 
 import com.carlosjr.products.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,6 +16,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/sub-product")
 @RequiredArgsConstructor
+@Slf4j
 public class SubProductResource {
 
     private final SubProductRepository subProductRepository;
@@ -26,7 +29,10 @@ public class SubProductResource {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(cacheNames = "sub-product-cache")
     public List<SubProduct> listSubProducts(Pageable pageable){
+
+        log.trace(" [ SubProductResource ] Attempt to find all sub products");
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "id"));

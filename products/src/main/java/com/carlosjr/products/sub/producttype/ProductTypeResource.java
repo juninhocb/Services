@@ -2,6 +2,8 @@ package com.carlosjr.products.sub.producttype;
 
 import com.carlosjr.products.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/product-type")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductTypeResource {
 
     private final  ProductTypeRepository productTypeRepository;
@@ -26,7 +29,11 @@ public class ProductTypeResource {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(cacheNames = "sub-product-cache")
     public List<ProductType> retrieveAllProductTypes(Pageable pageable){
+
+        log.trace(" [ ProductTypeResource ] Attempt to find all product types");
+
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 pageable.getSortOr(Sort.by(Sort.Direction.ASC, "id")));
 
