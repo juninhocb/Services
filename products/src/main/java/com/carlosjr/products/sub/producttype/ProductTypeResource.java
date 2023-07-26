@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import com.carlosjr.products.producttype.ProductTypeRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductTypeResource {
 
-    private final com.carlosjr.products.producttype.ProductTypeRepository productTypeRepository;
+    private final  ProductTypeRepository productTypeRepository;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createProductType(@RequestParam(name = "name") String typeName){
@@ -52,9 +53,6 @@ public class ProductTypeResource {
         }
         return productType.get();
     }
-
-
-
 
 
 }
