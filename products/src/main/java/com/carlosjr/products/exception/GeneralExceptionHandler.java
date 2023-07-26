@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Date;
 
@@ -19,6 +20,13 @@ public class GeneralExceptionHandler {
         System.out.println("get class: " + ex.getClass());  //dev purpose...
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseExceptionDTO);
     }
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ResponseExceptionDTO> methodArgumentMismatchHandler(MethodArgumentTypeMismatchException ex, HttpServletRequest request){
+        ResponseExceptionDTO responseExceptionDTO = new ResponseExceptionDTO(
+                request.getRequestURI(), ex.getMessage(), new Date());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseExceptionDTO);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ResponseExceptionDTO> resourceNotFoundException(Exception ex, HttpServletRequest request){
         ResponseExceptionDTO responseExceptionDTO = new ResponseExceptionDTO(
