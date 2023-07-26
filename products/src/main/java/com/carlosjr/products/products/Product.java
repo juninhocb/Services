@@ -44,7 +44,6 @@ public class Product implements Serializable {
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", name = "sub_product")
     private SubProduct subProduct;
-    @Enumerated(EnumType.STRING)
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", name = "unit_type")
     private UnitType unitType;

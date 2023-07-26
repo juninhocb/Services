@@ -21,7 +21,7 @@ public class ProductResource {
 
     private final ProductService productService;
     @GetMapping(value = "/find/{productId}/{groupId}")
-    public ResponseEntity<Product> findProductById(@PathVariable(name="productId") Long productId,@PathVariable(name="groupId") Long groupId) {
+    public ResponseEntity<Product> findProductById(@PathVariable(name="productId") UUID productId,@PathVariable(name="groupId") Long groupId) {
         Product product = productService.findAvailableProductByIdAndGroup(productId, groupId);
         return ResponseEntity.ok().body(product);
     }
@@ -43,12 +43,12 @@ public class ProductResource {
         return ResponseEntity.ok().body(products);
     }
     @PutMapping(value = "/safe-delete/{productId}/{groupId}")
-    public ResponseEntity<Void> safeDelete(@PathVariable(name = "productId") Long productId, @PathVariable(name = "groupId") Long groupId){
+    public ResponseEntity<Void> safeDelete(@PathVariable(name = "productId") UUID productId, @PathVariable(name = "groupId") Long groupId){
         productService.safeDeleteProduct(productId, groupId);
         return ResponseEntity.ok().build();
     }
     @PutMapping(value = "/recover/{productId}/{groupId}")
-    public ResponseEntity<Void> recoverResource(@PathVariable(name = "productId") Long productId, @PathVariable(name = "groupId") Long groupId){
+    public ResponseEntity<Void> recoverResource(@PathVariable(name = "productId") UUID productId, @PathVariable(name = "groupId") Long groupId){
         productService.recoverResource(productId, groupId);
         return ResponseEntity.ok().build();
     }

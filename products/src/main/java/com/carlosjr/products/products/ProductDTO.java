@@ -19,7 +19,7 @@ public record ProductDTO(
         Double value,
         @NotNull
         ProductType productType,
-        SubProduct feedSubProduct,
+        SubProduct subProduct,
         @NotNull
         UnitType unitType,
         @NotBlank

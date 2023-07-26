@@ -1,6 +1,7 @@
 package com.carlosjr.products.unittype;
 
 import com.carlosjr.products.products.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class UnitType {
     private String name;
 
     @OneToMany(mappedBy = "unitType")
+    @JsonIgnore
     private Set<Product> products;
 
 }
